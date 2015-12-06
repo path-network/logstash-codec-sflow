@@ -6,7 +6,7 @@ class SFlow < BinData::Record
   endian :big
   uint32 :sflow_version
   uint32 :ip_version
-  choice :agent_address, :selection => :ip_version do
+  choice :agent_ip, :selection => :ip_version do
     ip4_addr 1
     ip6_addr 2
   end
