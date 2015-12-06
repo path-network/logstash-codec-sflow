@@ -21,7 +21,7 @@ Gem::Specification.new do |s|
 
   # Gem dependencies
   s.add_runtime_dependency "logstash-core", ">= 2.0.0.beta2", "< 3.0.0"
-  s.add_runtime_dependency 'bindata', ['>= 1.5.0']
+  s.add_runtime_dependency 'bindata', ['>= 2.1.0']
   s.add_development_dependency 'logstash-devutils'
 end
 

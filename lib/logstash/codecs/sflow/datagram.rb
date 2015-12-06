@@ -18,9 +18,10 @@ class SFlow < BinData::Record
     bit20 :sample_entreprise
     bit12 :sample_format
     uint32 :sample_length
-    choice :sample_data, :selection => :sample_format do
-      flow_sample 1
-      counter_sample 2
+    choice :sample_data, :selection => lambda { "#{sample_entreprise}-#{sample_format}" } do
+      flow_sample "0-1"
+      counter_sample "0-2"
+      skip :default, :length => :sample_length
     end
   end
 end

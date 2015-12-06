@@ -39,13 +39,13 @@ class CounterSample < BinData::Record
     bit20 :record_entreprise
     bit12 :record_format
     uint32 :record_length
-    choice :record_data, :selection => :record_format do
-      generic_interface 1
-      ethernet_interfaces 2
-      token_ring 3
-      hundred_base_vg 4
-      vlan 5
-      processor_information 1001
+    choice :record_data, :selection => lambda { "#{record_entreprise}-#{record_format}" } do
+      generic_interface "0-1"
+      ethernet_interfaces "0-2"
+      token_ring "0-3"
+      hundred_base_vg "0-4"
+      vlan "0-5"
+      processor_information "0-1001"
       skip :default, :length => :record_length
     end
     #processor_information :record_data
