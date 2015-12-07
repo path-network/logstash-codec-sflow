@@ -23,8 +23,6 @@ class LogStash::Codecs::Sflow < LogStash::Codecs::Base
   def decode(payload)
     decoded = SFlow.read(payload)
 
-    puts decoded
-
     events = []
 
     decoded['samples'].each do |sample|
