@@ -13,8 +13,8 @@ end
 class EthernetFrameData < BinData::Record
   endian :big
   uint32 :packet_length
-  uint8 :src_mac
-  uint8 :dst_mac
+  mac_address :src_mac
+  mac_address :dst_mac
   uint32 :type
 end
 

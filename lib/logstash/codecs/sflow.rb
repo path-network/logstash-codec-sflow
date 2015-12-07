@@ -23,12 +23,19 @@ class LogStash::Codecs::Sflow < LogStash::Codecs::Base
   def decode(payload)
     decoded = SFlow.read(payload)
 
+    puts decoded
+
     events = []
 
     decoded['samples'].each do |sample|
+      if sample['sample_data'].to_s.eql? ''
+        @logger.warn("No sample decrypted for sample entreprise #{sample['sample_entreprise'].to_s}, format #{sample['sample_format'].to_s}")
+        next
+      end
       sample['sample_data']['records'].each do |record|
         # Ensure that some data exist for the record
         if record['record_data'].to_s.eql? ''
+          @logger.warn("No record decrypted for record entreprise #{record['record_entreprise'].to_s}, format #{record['record_format'].to_s}")
           next
         end
 

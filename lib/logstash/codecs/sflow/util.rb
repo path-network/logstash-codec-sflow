@@ -1,6 +1,20 @@
 require 'bindata'
 require 'ipaddr'
 
+class MacAddress < BinData::Primitive
+  array :bytes, :type => :uint8, :initial_length => 6
+  bit16 :padbytes
+
+  def set(val)
+    ints = val.split(/:/).collect { |int| int.to_i(16) }
+    self.bytes = ints
+  end
+
+  def get
+    self.bytes.collect { |byte| byte.value.to_s(16).rjust(2, '0') }.join(":")
+  end
+end
+
 class IP4Addr < BinData::Primitive
   endian :big
   uint32 :storage
