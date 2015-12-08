@@ -100,3 +100,22 @@ class ProcessorInformation < BinData::Record
   uint64 :total_memory
   uint64 :free_memory
 end
+
+class HttpCounters < BinData::Record
+  endian :big
+  uint32 :method_option_count
+  uint32 :method_get_count
+  uint32 :method_head_count
+  uint32 :method_post_count
+  uint32 :method_put_count
+  uint32 :method_delete_count
+  uint32 :method_trace_count
+  uint32 :method_connect_count
+  uint32 :method_other_count
+  uint32 :status_1XX_count
+  uint32 :status_2XX_count
+  uint32 :status_3XX_count
+  uint32 :status_4XX_count
+  uint32 :status_5XX_count
+  uint32 :status_other_count
+end

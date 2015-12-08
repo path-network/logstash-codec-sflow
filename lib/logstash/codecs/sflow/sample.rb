@@ -46,6 +46,7 @@ class CounterSample < BinData::Record
       hundred_base_vg "0-4"
       vlan "0-5"
       processor_information "0-1001"
+      http_counters "0-2201"
       skip :default, :length => :record_length
     end
     #processor_information :record_data
