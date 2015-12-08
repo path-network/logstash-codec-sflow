@@ -1,3 +1,5 @@
+# encoding: utf-8
+
 require 'bindata'
 require 'logstash/codecs/sflow/flow_record'
 require 'logstash/codecs/sflow/counter_record'

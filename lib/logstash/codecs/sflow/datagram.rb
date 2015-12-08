@@ -1,3 +1,5 @@
+# encoding: utf-8
+
 require 'bindata'
 require 'logstash/codecs/sflow/util'
 require 'logstash/codecs/sflow/sample'

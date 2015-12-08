@@ -1,5 +1,6 @@
-require 'bindata'
+# encoding: utf-8
 
+require 'bindata'
 
 class GenericInterface < BinData::Record
   endian :big
