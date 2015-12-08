@@ -5,7 +5,7 @@ require 'ipaddr'
 
 class MacAddress < BinData::Primitive
   array :bytes, :type => :uint8, :initial_length => 6
-  bit16 :padbytes
+  skip :length => 2
 
   def set(val)
     ints = val.split(/:/).collect { |int| int.to_i(16) }
