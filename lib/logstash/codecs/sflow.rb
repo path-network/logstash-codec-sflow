@@ -18,10 +18,16 @@ class LogStash::Codecs::Sflow < LogStash::Codecs::Base
     @threadsafe = false
   end
 
+  # def initialize
+
+  public
   def register
     require "logstash/codecs/sflow/datagram"
   end
 
+  # def register
+
+  public
   def decode(payload)
     decoded = SFlow.read(payload)
 
@@ -79,5 +85,5 @@ class LogStash::Codecs::Sflow < LogStash::Codecs::Base
     events.each do |event|
       yield event
     end
-  end
+  end # def decode
 end # class LogStash::Filters::Sflow
