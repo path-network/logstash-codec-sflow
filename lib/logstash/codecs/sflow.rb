@@ -1,4 +1,6 @@
 # encoding: utf-8
+require "logstash/codecs/base"
+require "logstash/namespace"
 
 # The "sflow" codec is for decoding sflow v5 flows.
 class LogStash::Codecs::Sflow < LogStash::Codecs::Base
