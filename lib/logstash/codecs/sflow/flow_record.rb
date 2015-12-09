@@ -2,6 +2,7 @@
 
 require 'bindata'
 require 'logstash/codecs/sflow/util'
+require 'logstash/codecs/sflow/packet_header'
 
 class RawPacketHeader < BinData::Record
   endian :big
@@ -9,14 +10,20 @@ class RawPacketHeader < BinData::Record
   uint32 :frame_length
   uint32 :stripped
   uint32 :header_size
-  skip :length => :header_size
+  choice :sample_header, :selection => :protocol do
+    ethernet_header 1, :size_header => lambda { header_size * 8 }
+    ip_header 11, :size_header => lambda { header_size * 8 }
+    skip :default, :length => :header_size
+  end
 end
 
 class EthernetFrameData < BinData::Record
   endian :big
   uint32 :packet_length
   mac_address :src_mac
+  skip :length => 2
   mac_address :dst_mac
+  skip :length => 2
   uint32 :type
 end
 

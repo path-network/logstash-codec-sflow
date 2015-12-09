@@ -29,6 +29,7 @@ class LogStash::Codecs::Sflow < LogStash::Codecs::Base
 
   public
   def decode(payload)
+
     decoded = SFlow.read(payload)
 
     events = []
