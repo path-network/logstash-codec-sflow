@@ -65,7 +65,7 @@ bundle exec rspec
 
 - Edit Logstash `tools/Gemfile` and add the local plugin path, for example:
 ```ruby
-gem "logstash-filter-awesome", :path => "/your/local/logstash-filter-awesome"
+gem "logstash-codec-sflow", :path => "/your/local/logstash-filter-awesome"
 ```
 - Update Logstash dependencies
 ```sh

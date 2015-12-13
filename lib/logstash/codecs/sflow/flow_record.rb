@@ -11,7 +11,7 @@ class RawPacketHeader < BinData::Record
   uint32 :stripped
   uint32 :header_size
   choice :sample_header, :selection => :protocol do
-    ethernet_header 1, :size_header => lambda { header_size * 8 }
+    #ethernet_header 1, :size_header => lambda { header_size * 8 }
     ip_header 11, :size_header => lambda { header_size * 8 }
     skip :default, :length => :header_size
   end

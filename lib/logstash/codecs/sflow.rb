@@ -1,10 +1,10 @@
 # encoding: utf-8
-require "logstash/codecs/base"
-require "logstash/namespace"
+require 'logstash/codecs/base'
+require 'logstash/namespace'
 
 # The "sflow" codec is for decoding sflow v5 flows.
 class LogStash::Codecs::Sflow < LogStash::Codecs::Base
-  config_name "sflow"
+  config_name 'sflow'
 
   # Specify which sflow must not be send in the event
   config :removed_field, :validate => :array, :default => ['record_length', 'record_count', 'record_entreprise',

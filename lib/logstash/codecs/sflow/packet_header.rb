@@ -25,11 +25,15 @@ class TcpHeader < BinData::Record
   bit1 :is_fin
   uint16 :window_size
   uint16 :tcp_checksum
-  uint16 :urgent_pointer
+  uint16 :urgent_pointer, :onlyif => :is_urgent_set?
   array :options, :initial_length => lambda { (((tcp_header_length * 4) - 20)/4).ceil }, :onlyif => :is_options? do
     string :option, :length => 4, :pad_byte => "\0"
   end
   bit :nbits => lambda { size_header - (tcp_header_length * 4 * 8) }
+
+  def is_urgent_set?
+    is_reset.to_i != 1
+  end
 
   def is_options?
     tcp_header_length.to_i > 5
@@ -90,11 +94,11 @@ class EthernetHeader < BinData::Record
   mandatory_parameter :size_header
 
   endian :big
-  mac_address :eth_src
   mac_address :eth_dst
+  mac_address :eth_src
   uint16 :eth_type
   choice :eth_data, :selection => :eth_type do
-    ip_header 2048, :size_header => :size_header
-    bit :default, :nbits => lambda { size_header - 28 }
+    ip_header 2048, :size_header => lambda { size_header - (14 * 8) }
+    bit :default, :nbits => lambda { size_header - (14 * 8) }
   end
 end
