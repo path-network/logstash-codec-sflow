@@ -4,6 +4,7 @@ require 'bindata'
 require 'logstash/codecs/sflow/util'
 require 'logstash/codecs/sflow/packet_header'
 
+# noinspection RubyResolve
 class RawPacketHeader < BinData::Record
   endian :big
   uint32 :protocol
@@ -17,6 +18,7 @@ class RawPacketHeader < BinData::Record
   end
 end
 
+# noinspection RubyResolve
 class EthernetFrameData < BinData::Record
   endian :big
   uint32 :packet_length
@@ -27,6 +29,7 @@ class EthernetFrameData < BinData::Record
   uint32 :type
 end
 
+# noinspection RubyResolve
 class IP4Data < BinData::Record
   endian :big
   uint32 :ip_packet_length
@@ -39,6 +42,7 @@ class IP4Data < BinData::Record
   uint32 :type
 end
 
+# noinspection RubyResolve
 class IP6Data < BinData::Record
   endian :big
   uint32 :ip_packet_length
@@ -51,6 +55,7 @@ class IP6Data < BinData::Record
   uint32 :ip_priority
 end
 
+# noinspection RubyResolve
 class ExtendedSwitchData < BinData::Record
   endian :big
   uint32 :src_vlan
@@ -59,6 +64,7 @@ class ExtendedSwitchData < BinData::Record
   uint32 :dst_priority
 end
 
+# noinspection RubyResolve
 class ExtendedRouterData < BinData::Record
   endian :big
   uint32 :ip_version

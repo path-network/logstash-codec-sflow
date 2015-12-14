@@ -4,6 +4,7 @@ require 'bindata'
 require 'logstash/codecs/sflow/flow_record'
 require 'logstash/codecs/sflow/counter_record'
 
+# noinspection RubyResolve
 class FlowSample < BinData::Record
   endian :big
   uint32 :flow_sequence_number
@@ -20,17 +21,18 @@ class FlowSample < BinData::Record
     bit12 :record_format
     uint32 :record_length
     choice :record_data, :selection => lambda { "#{record_entreprise}-#{record_format}" } do
-      raw_packet_header "0-1"
-      ethernet_frame_data "0-2"
-      ip4_data "0-3"
-      ip6_data "0-4"
-      extended_switch_data "0-1001"
-      extended_router_data "0-1002"
+      raw_packet_header '0-1'
+      ethernet_frame_data '0-2'
+      ip4_data '0-3'
+      ip6_data '0-4'
+      extended_switch_data '0-1001'
+      extended_router_data '0-1002'
       skip :default, :length => :record_length
     end
   end
 end
 
+# noinspection RubyResolve
 class CounterSample < BinData::Record
   endian :big
   uint32 :sample_seq_number
@@ -42,13 +44,13 @@ class CounterSample < BinData::Record
     bit12 :record_format
     uint32 :record_length
     choice :record_data, :selection => lambda { "#{record_entreprise}-#{record_format}" } do
-      generic_interface "0-1"
-      ethernet_interfaces "0-2"
-      token_ring "0-3"
-      hundred_base_vg "0-4"
-      vlan "0-5"
-      processor_information "0-1001"
-      http_counters "0-2201"
+      generic_interface '0-1'
+      ethernet_interfaces '0-2'
+      token_ring '0-3'
+      hundred_base_vg '0-4'
+      vlan '0-5'
+      processor_information '0-1001'
+      http_counters '0-2201'
       skip :default, :length => :record_length
     end
     #processor_information :record_data

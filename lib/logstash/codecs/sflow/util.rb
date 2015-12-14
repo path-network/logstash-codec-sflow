@@ -3,6 +3,7 @@
 require 'bindata'
 require 'ipaddr'
 
+# noinspection RubyResolve
 class MacAddress < BinData::Primitive
   array :bytes, :type => :uint8, :initial_length => 6
 
@@ -12,17 +13,18 @@ class MacAddress < BinData::Primitive
   end
 
   def get
-    self.bytes.collect { |byte| byte.value.to_s(16).rjust(2, '0') }.join(":")
+    self.bytes.collect { |byte| byte.value.to_s(16).rjust(2, '0') }.join(':')
   end
 end
 
+# noinspection RubyResolve,RubyResolve,RubyResolve
 class IP4Addr < BinData::Primitive
   endian :big
   uint32 :storage
 
   def set(val)
     ip = IPAddr.new(val)
-    if !ip.ipv4?
+    unless ip.ipv4?
       raise ArgumentError, "invalid IPv4 address '#{val}'"
     end
     self.storage = ip.to_i
@@ -33,13 +35,14 @@ class IP4Addr < BinData::Primitive
   end
 end
 
+# noinspection RubyResolve
 class IP6Addr < BinData::Primitive
   endian :big
   uint128 :storage
 
   def set(val)
     ip = IPAddr.new(val)
-    if !ip.ipv6?
+    unless ip.ipv6?
       raise ArgumentError, "invalid IPv6 address `#{val}'"
     end
     self.storage = ip.to_i

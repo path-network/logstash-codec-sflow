@@ -2,6 +2,7 @@
 
 require 'bindata'
 
+# noinspection RubyResolve
 class GenericInterface < BinData::Record
   endian :big
   uint32 :interface_index
@@ -25,6 +26,7 @@ class GenericInterface < BinData::Record
   uint32 :promiscous_mode
 end
 
+# noinspection RubyResolve
 class EthernetInterfaces < BinData::Record
   endian :big
   uint32 :dot3StatsAlignmentErrors
@@ -42,6 +44,7 @@ class EthernetInterfaces < BinData::Record
   uint32 :dot3StatsSymbolErrors
 end
 
+# noinspection RubyResolve
 class TokenRing < BinData::Record
   endian :big
   uint32 :dot5StatsLineErrors
@@ -64,6 +67,7 @@ class TokenRing < BinData::Record
   uint32 :dot5StatsFreqErrors
 end
 
+# noinspection RubyResolve
 class HundredBaseVG < BinData::Record
   endian :big
   uint32 :dot12InHighPriorityFrames
@@ -82,6 +86,7 @@ class HundredBaseVG < BinData::Record
   uint64 :dot12HCOutHighPriorityOctets
 end
 
+# noinspection RubyResolve
 class Vlan < BinData::Record
   endian :big
   uint32 :vlan_id
@@ -93,6 +98,7 @@ class Vlan < BinData::Record
 end
 
 
+# noinspection RubyResolve
 class ProcessorInformation < BinData::Record
   endian :big
   uint32 :five_sec_cpu_percent
@@ -102,6 +108,7 @@ class ProcessorInformation < BinData::Record
   uint64 :free_memory
 end
 
+# noinspection RubyResolve
 class HttpCounters < BinData::Record
   endian :big
   uint32 :method_option_count

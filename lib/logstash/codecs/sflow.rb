@@ -7,31 +7,21 @@ class LogStash::Codecs::Sflow < LogStash::Codecs::Base
   config_name 'sflow'
 
   # Specify which sflow must not be send in the event
-  config :optional_removed_field, :validate => :array, :default => ['sflow_version', 'ip_version', 'header_size',
-                                                                    'ip_header_length', 'ip_dscp', 'ip_ecn',
-                                                                    'ip_total_length', 'ip_identification', 'ip_flags',
-                                                                    'ip_fragment_offset', 'ip_ttl', 'ip_checksum',
-                                                                    'ip_options', 'tcp_seq_number', 'tcp_ack_number',
-                                                                    'tcp_header_length', 'tcp_reserved', 'tcp_is_nonce',
-                                                                    'tcp_is_cwr', 'tcp_is_ecn_echo', 'tcp_is_urgent',
-                                                                    'tcp_is_ack', 'tcp_is_push', 'tcp_is_reset',
-                                                                    'tcp_is_syn', 'tcp_is_fin', 'tcp_window_size',
-                                                                    'tcp_checksum', 'tcp_urgent_pointer', 'tcp_options']
+  config :optional_removed_field, :validate => :array, :default => %w(sflow_version ip_version header_size ip_header_length ip_dscp ip_ecn ip_total_length ip_identification ip_flags ip_fragment_offset ip_ttl ip_checksum ip_options tcp_seq_number tcp_ack_number tcp_header_length tcp_reserved tcp_is_nonce tcp_is_cwr tcp_is_ecn_echo tcp_is_urgent tcp_is_ack tcp_is_push tcp_is_reset tcp_is_syn tcp_is_fin tcp_window_size tcp_checksum tcp_urgent_pointer tcp_options)
 
 
   def initialize(params = {})
     super(params)
     @threadsafe = false
-    @removed_field = ['record_length', 'record_count', 'record_entreprise', 'record_format', 'sample_entreprise',
-                      'sample_format', 'sample_length', 'sample_count', 'sample_header', 'layer3', 'layer4',
-                      'layer4_data', 'header', 'udata'] | @optional_removed_field
+    # noinspection RubyResolve
+    @removed_field = %w(record_length record_count record_entreprise record_format sample_entreprise sample_format sample_length sample_count sample_header layer3 layer4 layer4_data header udata) | @optional_removed_field
   end
 
   # def initialize
 
   public
   def register
-    require "logstash/codecs/sflow/datagram"
+    require 'logstash/codecs/sflow/datagram'
   end
 
   # def register
@@ -100,15 +90,12 @@ class LogStash::Codecs::Sflow < LogStash::Codecs::Base
               end
             end
 
-            if record['record_data']['sample_header'].has_key?("layer3")
+            if record['record_data']['sample_header'].has_key?('layer3')
               record['record_data']['sample_header']['layer3']['header'].each_pair do |k, v|
                 unless k.to_s.eql? 'record_data' or @removed_field.include? k.to_s
                   event["#{k}"] = v
                 end
               end
-
-              test = BinData::Choice
-
 
               record['record_data']['sample_header']['layer3']['header']['layer4'].each_pair do |k, v|
                 unless k.to_s.eql? 'record_data' or @removed_field.include? k.to_s

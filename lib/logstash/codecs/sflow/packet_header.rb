@@ -4,6 +4,7 @@ require 'bindata'
 require 'logstash/codecs/sflow/util'
 
 
+# noinspection RubyResolve
 class UnknownHeader < BinData::Record
   mandatory_parameter :size_header
 
@@ -12,6 +13,7 @@ class UnknownHeader < BinData::Record
 end
 
 
+# noinspection RubyResolve,RubyResolve
 class TcpHeader < BinData::Record
   mandatory_parameter :size_header
 
@@ -44,6 +46,7 @@ class TcpHeader < BinData::Record
   end
 end
 
+# noinspection RubyResolve
 class UdpHeader < BinData::Record
   mandatory_parameter :size_header
 
@@ -56,6 +59,7 @@ class UdpHeader < BinData::Record
   bit :layer4_data, :nbits => lambda { size_header - 64 } #skip udp data
 end
 
+# noinspection RubyResolve,RubyResolve
 class IPV4Header < BinData::Record
   mandatory_parameter :size_header
 
@@ -87,6 +91,7 @@ class IPV4Header < BinData::Record
 end
 
 
+# noinspection RubyResolve
 class IPHeader < BinData::Record
   mandatory_parameter :size_header
 
@@ -98,6 +103,7 @@ class IPHeader < BinData::Record
   end
 end
 
+# noinspection RubyResolve
 class EthernetHeader < BinData::Record
   mandatory_parameter :size_header
 
