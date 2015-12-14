@@ -4,6 +4,14 @@ require 'bindata'
 require 'logstash/codecs/sflow/util'
 
 
+class UnknownHeader < BinData::Record
+  mandatory_parameter :size_header
+
+  endian :big
+  bit :udata, :nbits => :size_header
+end
+
+
 class TcpHeader < BinData::Record
   mandatory_parameter :size_header
 
@@ -29,7 +37,7 @@ class TcpHeader < BinData::Record
   array :tcp_options, :initial_length => lambda { (((tcp_header_length * 4) - 20)/4).ceil }, :onlyif => :is_options? do
     string :tcp_option, :length => 4, :pad_byte => "\0"
   end
-  bit :nbits => lambda { size_header - (tcp_header_length * 4 * 8) }
+  bit :layer4_data, :nbits => lambda { size_header - (tcp_header_length * 4 * 8) }
 
   def is_options?
     tcp_header_length.to_i > 5
@@ -37,12 +45,15 @@ class TcpHeader < BinData::Record
 end
 
 class UdpHeader < BinData::Record
+  mandatory_parameter :size_header
+
   endian :big
   uint16 :src_port
   uint16 :dst_port
   uint16 :udp_length
   uint16 :udp_checksum
-  skip :length => lambda { udp_length - 64 } #skip udp data
+  #skip :length => lambda { udp_length - 64 } #skip udp data
+  bit :layer4_data, :nbits => lambda { size_header - 64 } #skip udp data
 end
 
 class IPV4Header < BinData::Record
@@ -66,14 +77,15 @@ class IPV4Header < BinData::Record
   end
   choice :layer4, :selection => :ip_protocol do
     tcp_header 6, :size_header => lambda { size_header - (ip_header_length * 4 * 8) }
-    udp_header 17
-    bit :default, :nbits => lambda { size_header - (ip_header_length * 4 * 8) }
+    udp_header 17, :size_header => lambda { size_header - (ip_header_length * 4 * 8) }
+    unknown_header :default, :size_header => lambda { size_header - (ip_header_length * 4 * 8) }
   end
 
   def is_options?
     ip_header_length.to_i > 5
   end
 end
+
 
 class IPHeader < BinData::Record
   mandatory_parameter :size_header
@@ -82,7 +94,7 @@ class IPHeader < BinData::Record
   bit4 :ip_version
   choice :header, :selection => :ip_version do
     ipv4_header 4, :size_header => :size_header
-    bit :default, :nbits => lambda { size_header - 4 }
+    unknown_header :default, :size_header => lambda { size_header - 4 }
   end
 end
 
@@ -95,6 +107,6 @@ class EthernetHeader < BinData::Record
   uint16 :eth_type
   choice :layer3, :selection => :eth_type do
     ip_header 2048, :size_header => lambda { size_header - (14 * 8) }
-    bit :default, :nbits => lambda { size_header - (14 * 8) }
+    unknown_header :default, :size_header => lambda { size_header - (14 * 8) }
   end
 end

@@ -6,7 +6,7 @@ require 'logstash/codecs/sflow/counter_record'
 
 class FlowSample < BinData::Record
   endian :big
-  uint32 :sequence_number
+  uint32 :flow_sequence_number
   uint8 :source_id_type
   uint24 :source_id_index
   uint32 :sampling_rate

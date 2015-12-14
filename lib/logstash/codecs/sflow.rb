@@ -24,7 +24,7 @@ class LogStash::Codecs::Sflow < LogStash::Codecs::Base
     @threadsafe = false
     @removed_field = ['record_length', 'record_count', 'record_entreprise', 'record_format', 'sample_entreprise',
                       'sample_format', 'sample_length', 'sample_count', 'sample_header', 'layer3', 'layer4',
-                      'tcp_nbits', 'ip_nbits'] | @optional_removed_field
+                      'layer4_data', 'header', 'udata'] | @optional_removed_field
   end
 
   # def initialize
@@ -106,9 +106,10 @@ class LogStash::Codecs::Sflow < LogStash::Codecs::Base
                   event["#{k}"] = v
                 end
               end
-            end
 
-            unless record['record_data']['sample_header']['layer3']['header']['layer4'].to_s.eql? ''
+              test = BinData::Choice
+
+
               record['record_data']['sample_header']['layer3']['header']['layer4'].each_pair do |k, v|
                 unless k.to_s.eql? 'record_data' or @removed_field.include? k.to_s
                   event["#{k}"] = v

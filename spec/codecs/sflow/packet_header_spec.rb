@@ -6,7 +6,7 @@ require "logstash/codecs/sflow/packet_header"
 describe UdpHeader do
   it "should decode udp header" do
     payload = IO.read(File.join(File.dirname(__FILE__), "udp.dat"), :mode => "rb")
-    decoded = UdpHeader.read(payload)
+    decoded = UdpHeader.new(:size_header => payload.bytesize * 8).read(payload)
 
     decoded["src_port"].to_s.should eq("20665")
     decoded["dst_port"].to_s.should eq("514")
