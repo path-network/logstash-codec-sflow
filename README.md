@@ -65,7 +65,7 @@ bundle exec rspec
 
 - Edit Logstash `tools/Gemfile` and add the local plugin path, for example:
 ```ruby
-gem "logstash-codec-sflow", :path => "/your/local/logstash-filter-awesome"
+gem "logstash-codec-sflow", :path => "/your/local/logstash-codec-sflow"
 ```
 - Update Logstash dependencies
 ```sh
@@ -73,7 +73,7 @@ rake vendor:gems
 ```
 - Run Logstash with your plugin
 ```sh
-bin/logstash -e 'filter {awesome {}}'
+bin/logstash -e 'input { udp { port => 6343 codec => sflow }}'
 ```
 At this point any modifications to the plugin code will be applied to this local Logstash setup. After modifying the plugin, simply rerun Logstash.
 
@@ -81,11 +81,11 @@ At this point any modifications to the plugin code will be applied to this local
 
 - Build your plugin gem
 ```sh
-gem build logstash-filter-awesome.gemspec
+gem build logstash-codec-sflow.gemspec
 ```
 - Install the plugin from the Logstash home
 ```sh
-bin/plugin install /your/local/plugin/logstash-filter-awesome.gem
+bin/plugin install /your/local/plugin/logstash-codec-sflow.gem
 ```
 - Start Logstash and proceed to test the plugin
 

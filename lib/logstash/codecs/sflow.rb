@@ -14,10 +14,33 @@ class LogStash::Codecs::Sflow < LogStash::Codecs::Base
     super(params)
     @threadsafe = false
     # noinspection RubyResolve
-    @removed_field = %w(record_length record_count record_entreprise record_format sample_entreprise sample_format sample_length sample_count sample_header layer3 layer4 layer4_data header udata) | @optional_removed_field
+    @removed_field = %w(records record_data record_length record_count record_entreprise record_format samples sample_data sample_entreprise sample_format sample_length sample_count sample_header layer3 layer4 layer4_data header udata) | @optional_removed_field
   end
 
   # def initialize
+
+  def assign_key_value(event, bindata_kv)
+    bindata_kv.each_pair do |k, v|
+      unless @removed_field.include? k.to_s
+        event["#{k}"] = v
+      end
+    end
+  end
+
+  def common_sflow(event, decoded, sample, record)
+    # Ensure that some data exist for the record
+    if record['record_data'].to_s.eql? ''
+      @logger.warn("Unknown record entreprise #{record['record_entreprise'].to_s}, format #{record['record_format'].to_s}")
+      next
+    end
+
+    assign_key_value(event, decoded)
+    assign_key_value(event, sample)
+    assign_key_value(event, sample['sample_data'])
+    assign_key_value(event, record)
+    assign_key_value(event, record['record_data'])
+
+  end
 
   public
   def register
@@ -47,61 +70,14 @@ class LogStash::Codecs::Sflow < LogStash::Codecs::Base
             LogStash::Event::TIMESTAMP => LogStash::Timestamp.now
         }
         sample['sample_data']['records'].each do |record|
-          # Ensure that some data exist for the record
-          if record['record_data'].to_s.eql? ''
-            @logger.warn("Unknown record entreprise #{record['record_entreprise'].to_s}, format #{record['record_format'].to_s}")
-            next
-          end
-
-          decoded.each_pair do |k, v|
-            unless k.to_s.eql? 'samples' or @removed_field.include? k.to_s
-              event["#{k}"] = v
-            end
-          end
-
-          sample.each_pair do |k, v|
-            unless k.to_s.eql? 'sample_data' or @removed_field.include? k.to_s
-              event["#{k}"] = v
-            end
-          end
-
-          sample['sample_data'].each_pair do |k, v|
-            unless k.to_s.eql? 'records' or @removed_field.include? k.to_s
-              event["#{k}"] = v
-            end
-          end
-
-          record.each_pair do |k, v|
-            unless k.to_s.eql? 'record_data' or @removed_field.include? k.to_s
-              event["#{k}"] = v
-            end
-          end
-
-          record['record_data'].each_pair do |k, v|
-            unless k.to_s.eql? 'record_data' or @removed_field.include? k.to_s
-              event["#{k}"] = v
-            end
-          end
+          common_sflow(event, decoded, sample, record)
 
           unless record['record_data']['sample_header'].to_s.eql? ''
-            record['record_data']['sample_header'].each_pair do |k, v|
-              unless k.to_s.eql? 'record_data' or @removed_field.include? k.to_s
-                event["#{k}"] = v
-              end
-            end
+            assign_key_value(event, record['record_data']['sample_header'])
 
             if record['record_data']['sample_header'].has_key?('layer3')
-              record['record_data']['sample_header']['layer3']['header'].each_pair do |k, v|
-                unless k.to_s.eql? 'record_data' or @removed_field.include? k.to_s
-                  event["#{k}"] = v
-                end
-              end
-
-              record['record_data']['sample_header']['layer3']['header']['layer4'].each_pair do |k, v|
-                unless k.to_s.eql? 'record_data' or @removed_field.include? k.to_s
-                  event["#{k}"] = v
-                end
-              end
+              assign_key_value(event, record['record_data']['sample_header']['layer3']['header'])
+              assign_key_value(event, record['record_data']['sample_header']['layer3']['header']['layer4'])
             end
           end
 
@@ -111,44 +87,12 @@ class LogStash::Codecs::Sflow < LogStash::Codecs::Base
         #treat counter flow
       elsif sample['sample_entreprise'] == 0 && sample['sample_format'] == 2
         sample['sample_data']['records'].each do |record|
-          # Ensure that some data exist for the record
-          if record['record_data'].to_s.eql? ''
-            @logger.warn("Unknown record entreprise #{record['record_entreprise'].to_s}, format #{record['record_format'].to_s}")
-            next
-          end
-
           # Create the logstash event
           event = {
               LogStash::Event::TIMESTAMP => LogStash::Timestamp.now
           }
 
-          decoded.each_pair do |k, v|
-            unless k.to_s.eql? 'samples' or @removed_field.include? k.to_s
-              event["#{k}"] = v
-            end
-          end
-
-          sample.each_pair do |k, v|
-            unless k.to_s.eql? 'sample_data' or @removed_field.include? k.to_s
-              event["#{k}"] = v
-            end
-          end
-
-          sample['sample_data'].each_pair do |k, v|
-            unless k.to_s.eql? 'records' or @removed_field.include? k.to_s
-              event["#{k}"] = v
-            end
-          end
-
-          record.each_pair do |k, v|
-            unless k.to_s.eql? 'record_data' or @removed_field.include? k.to_s
-              event["#{k}"] = v
-            end
-          end
-
-          record['record_data'].each_pair do |k, v|
-            event["#{k}"] = v
-          end
+          common_sflow(event, decoded, sample, record)
 
           events.push(event)
         end
