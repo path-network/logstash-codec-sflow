@@ -1,6 +1,6 @@
 # Logstash Codec SFlow Plugin
 ## Description
-Logstash codec plugin to decrypt sflow
+Logstash codec plugin to decode sflow codec
 
 [![Build
 Status](http://build-eu-00.elastic.co/view/LS%20Plugins/view/LS%20Codecs/job/logstash-plugin-codec-example-unit/badge/icon)](http://build-eu-00.elastic.co/view/LS%20Plugins/view/LS%20Codecs/job/logstash-plugin-codec-example-unit/)
