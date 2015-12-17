@@ -27,19 +27,16 @@ class LogStash::Codecs::Sflow < LogStash::Codecs::Base
     end
   end
 
+  # @param [Object] event
+  # @param [Object] decoded
+  # @param [Object] sample
+  # @param [Object] record
   def common_sflow(event, decoded, sample, record)
-    # Ensure that some data exist for the record
-    if record['record_data'].to_s.eql? ''
-      @logger.warn("Unknown record entreprise #{record['record_entreprise'].to_s}, format #{record['record_format'].to_s}")
-      next
-    end
-
     assign_key_value(event, decoded)
     assign_key_value(event, sample)
     assign_key_value(event, sample['sample_data'])
     assign_key_value(event, record)
     assign_key_value(event, record['record_data'])
-
   end
 
   public
@@ -66,8 +63,14 @@ class LogStash::Codecs::Sflow < LogStash::Codecs::Base
       #treat sample flow
       if sample['sample_entreprise'] == 0 && sample['sample_format'] == 1
         # Create the logstash event
-        event = LogStash::Event.new()
+        event = LogStash::Event.new
         sample['sample_data']['records'].each do |record|
+          # Ensure that some data exist for the record
+          if record['record_data'].to_s.eql? ''
+            @logger.warn("Unknown record entreprise #{record['record_entreprise'].to_s}, format #{record['record_format'].to_s}")
+            next
+          end
+
           common_sflow(event, decoded, sample, record)
 
           unless record['record_data']['sample_header'].to_s.eql? ''
@@ -85,8 +88,14 @@ class LogStash::Codecs::Sflow < LogStash::Codecs::Base
         #treat counter flow
       elsif sample['sample_entreprise'] == 0 && sample['sample_format'] == 2
         sample['sample_data']['records'].each do |record|
+          # Ensure that some data exist for the record
+          if record['record_data'].to_s.eql? ''
+            @logger.warn("Unknown record entreprise #{record['record_entreprise'].to_s}, format #{record['record_format'].to_s}")
+            next
+          end
+
           # Create the logstash event
-          event = LogStash::Event.new()
+          event = LogStash::Event.new
 
           common_sflow(event, decoded, sample, record)
 
