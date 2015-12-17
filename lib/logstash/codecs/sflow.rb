@@ -66,9 +66,7 @@ class LogStash::Codecs::Sflow < LogStash::Codecs::Base
       #treat sample flow
       if sample['sample_entreprise'] == 0 && sample['sample_format'] == 1
         # Create the logstash event
-        event = {
-            LogStash::Event::TIMESTAMP => LogStash::Timestamp.now
-        }
+        event = LogStash::Event.new()
         sample['sample_data']['records'].each do |record|
           common_sflow(event, decoded, sample, record)
 
@@ -88,9 +86,7 @@ class LogStash::Codecs::Sflow < LogStash::Codecs::Base
       elsif sample['sample_entreprise'] == 0 && sample['sample_format'] == 2
         sample['sample_data']['records'].each do |record|
           # Create the logstash event
-          event = {
-              LogStash::Event::TIMESTAMP => LogStash::Timestamp.now
-          }
+          event = LogStash::Event.new()
 
           common_sflow(event, decoded, sample, record)
 
