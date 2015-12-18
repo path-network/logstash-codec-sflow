@@ -22,9 +22,9 @@ end
 class EthernetFrameData < BinData::Record
   endian :big
   uint32 :packet_length
-  mac_address :src_mac
+  sflow_mac_address :src_mac
   skip :length => 2
-  mac_address :dst_mac
+  sflow_mac_address :dst_mac
   skip :length => 2
   uint32 :type
 end
@@ -34,8 +34,8 @@ class IP4Data < BinData::Record
   endian :big
   uint32 :ip_packet_length
   uint32 :ip_protocol
-  ip4_addr :src_ip
-  ip4_addr :dst_ip
+  sflow_ip4_addr :src_ip
+  sflow_ip4_addr :dst_ip
   uint32 :src_port
   uint32 :dst_port
   uint32 :tcp_flags
@@ -47,8 +47,8 @@ class IP6Data < BinData::Record
   endian :big
   uint32 :ip_packet_length
   uint32 :ip_next_header
-  ip6_addr :src_ip
-  ip6_addr :dst_ip
+  sflow_ip6_addr :src_ip
+  sflow_ip6_addr :dst_ip
   uint32 :src_port
   uint32 :dst_port
   uint32 :tcp_flags
@@ -69,8 +69,8 @@ class ExtendedRouterData < BinData::Record
   endian :big
   uint32 :ip_version
   choice :ip_address_next_hop_router, :selection => :ip_version do
-    ip4_addr 1
-    ip6_addr 2
+    sflow_ip4_addr 1
+    sflow_ip6_addr 2
   end
   uint32 :src_mask_len
   uint32 :dst_mask_len

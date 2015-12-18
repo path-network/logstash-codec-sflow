@@ -74,8 +74,8 @@ class IPV4Header < BinData::Record
   uint8 :ip_ttl
   uint8 :ip_protocol
   uint16 :ip_checksum
-  ip4_addr :src_ip
-  ip4_addr :dst_ip
+  sflow_ip4_addr :src_ip
+  sflow_ip4_addr :dst_ip
   array :ip_options, :initial_length => lambda { (((ip_header_length * 4) - 20)/4).ceil }, :onlyif => :is_options? do
     string :ip_option, :length => 4, :pad_byte => "\0"
   end
@@ -108,8 +108,8 @@ class EthernetHeader < BinData::Record
   mandatory_parameter :size_header
 
   endian :big
-  mac_address :eth_dst
-  mac_address :eth_src
+  sflow_mac_address :eth_dst
+  sflow_mac_address :eth_src
   uint16 :eth_type
   choice :layer3, :selection => :eth_type do
     ip_header 2048, :size_header => lambda { size_header - (14 * 8) }

@@ -10,8 +10,8 @@ class SFlow < BinData::Record
   uint32 :sflow_version
   uint32 :ip_version
   choice :agent_ip, :selection => :ip_version do
-    ip4_addr 1
-    ip6_addr 2
+    sflow_ip4_addr 1
+    sflow_ip6_addr 2
   end
   uint32 :sub_agent_id
   uint32 :sequence_number

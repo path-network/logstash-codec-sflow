@@ -4,7 +4,7 @@ require 'bindata'
 require 'ipaddr'
 
 # noinspection RubyResolve
-class MacAddress < BinData::Primitive
+class SflowMacAddress < BinData::Primitive
   array :bytes, :type => :uint8, :initial_length => 6
 
   def set(val)
@@ -18,7 +18,7 @@ class MacAddress < BinData::Primitive
 end
 
 # noinspection RubyResolve,RubyResolve,RubyResolve
-class IP4Addr < BinData::Primitive
+class SflowIP4Addr < BinData::Primitive
   endian :big
   uint32 :storage
 
@@ -36,7 +36,7 @@ class IP4Addr < BinData::Primitive
 end
 
 # noinspection RubyResolve
-class IP6Addr < BinData::Primitive
+class SflowIP6Addr < BinData::Primitive
   endian :big
   uint128 :storage
 
