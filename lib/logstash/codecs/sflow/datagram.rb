@@ -4,6 +4,12 @@ require 'bindata'
 require 'logstash/codecs/sflow/util'
 require 'logstash/codecs/sflow/sample'
 
+
+class SFlowHeader < BinData::Record
+  endian :big
+  uint32 :sflow_version
+end
+
 # noinspection RubyResolve
 class SFlow < BinData::Record
   endian :big
