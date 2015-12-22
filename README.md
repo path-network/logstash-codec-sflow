@@ -6,11 +6,12 @@ This codec manage flow sample and counter flow.
 For the flow sample it is able to decode Ethernet, IPv4, UDP and TCP header
 
 For the counter flow it is able to decode some records of type:
-    - Generic Interface
-    - Ethernet Interface
-    - VLAN
-    - Processor Information
-    - HTTP
+
+- Generic Interface
+- Ethernet Interface
+- VLAN
+- Processor Information
+- HTTP
 
 
 [![Build
