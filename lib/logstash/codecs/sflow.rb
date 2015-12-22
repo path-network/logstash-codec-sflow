@@ -95,6 +95,8 @@ class LogStash::Codecs::Sflow < LogStash::Codecs::Base
         if event.include?('frame_length') and event.include?('sampling_rate')
           event["frame_length_times_sampling_rate"] = event['frame_length'].to_i * event['sampling_rate'].to_i
         end
+
+        event["sflow_type"] = 'sample'
         events.push(event)
 
         #treat counter flow
@@ -111,6 +113,7 @@ class LogStash::Codecs::Sflow < LogStash::Codecs::Base
 
           common_sflow(event, decoded, sample, record)
 
+          event["sflow_type"] = 'counter'
           events.push(event)
         end
       end
