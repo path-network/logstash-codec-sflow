@@ -15,9 +15,13 @@ describe SFlow do
     decoded = SFlow.read(payload)
   end
 
-
   it "should decode sflow sample" do
     payload = IO.read(File.join(File.dirname(__FILE__), "sflow_flow_sample.dat"), :mode => "rb")
+    decoded = SFlow.read(payload)
+  end
+
+  it "should decode sflow sample eth vlan" do
+    payload = IO.read(File.join(File.dirname(__FILE__), "sflow_flow_sample_eth_vlan.dat"), :mode => "rb")
     decoded = SFlow.read(payload)
   end
 end

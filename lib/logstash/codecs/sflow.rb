@@ -17,18 +17,21 @@ class LogStash::Codecs::Sflow < LogStash::Codecs::Base
     super(params)
     @threadsafe = false
     # noinspection RubyResolve
-    @removed_field = %w(records record_data record_length record_count record_entreprise record_format samples sample_data sample_entreprise sample_format sample_length sample_count sample_header layer3 layer4 layer4_data header udata) | @optional_removed_field
+    #@removed_field = %w(records record_data record_length record_count record_entreprise record_format samples sample_data sample_entreprise sample_format sample_length sample_count sample_header layer3 layer4 layer4_data header data) | @optional_removed_field
+    @removed_field = %w(record_length record_count record_entreprise record_format sample_entreprise sample_format sample_length sample_count sample_header data) | @optional_removed_field
   end
 
   # def initialize
 
   def assign_key_value(event, bindata_kv)
-    if bindata_kv.nil?
-      @logger.warn("Ignoring bindata_kv for event #{event}")
-    else
+    unless bindata_kv.nil? or bindata_kv.to_s.eql? ''
       bindata_kv.each_pair do |k, v|
-        unless @removed_field.include? k.to_s
-          event["#{k.to_s}"] = v.to_s
+        if v.is_a?(BinData::Choice)
+          assign_key_value(event, bindata_kv[k])
+        else
+          unless @removed_field.include? k.to_s or v.is_a?(BinData::Array)
+            event["#{k.to_s}"] = v.to_s
+          end
         end
       end
     end
@@ -38,12 +41,9 @@ class LogStash::Codecs::Sflow < LogStash::Codecs::Base
   # @param [Object] decoded
   # @param [Object] sample
   # @param [Object] record
-  def common_sflow(event, decoded, sample, record)
+  def common_sflow(event, decoded, sample)
     assign_key_value(event, decoded)
     assign_key_value(event, sample)
-    assign_key_value(event, sample['sample_data'])
-    assign_key_value(event, record)
-    assign_key_value(event, record['record_data'])
   end
 
   public
@@ -76,6 +76,8 @@ class LogStash::Codecs::Sflow < LogStash::Codecs::Base
       if sample['sample_entreprise'] == 0 && sample['sample_format'] == 1
         # Create the logstash event
         event = LogStash::Event.new
+        common_sflow(event, decoded, sample)
+
         sample['sample_data']['records'].each do |record|
           # Ensure that some data exist for the record
           if record['record_data'].to_s.eql? ''
@@ -83,16 +85,7 @@ class LogStash::Codecs::Sflow < LogStash::Codecs::Base
             next
           end
 
-          common_sflow(event, decoded, sample, record)
-
-          unless record['record_data']['sample_header'].to_s.eql? ''
-            assign_key_value(event, record['record_data']['sample_header'])
-
-            if record['record_data']['sample_header'].has_key?('layer3') and record['record_data']['sample_header']['layer3'].has_key?('header')
-              assign_key_value(event, record['record_data']['sample_header']['layer3']['header'])
-              assign_key_value(event, record['record_data']['sample_header']['layer3']['header']['layer4'])
-            end
-          end
+          assign_key_value(event, record)
 
         end
         #compute frame_length_times_sampling_rate
@@ -114,8 +107,9 @@ class LogStash::Codecs::Sflow < LogStash::Codecs::Base
 
           # Create the logstash event
           event = LogStash::Event.new
+          common_sflow(event, decoded, sample)
 
-          common_sflow(event, decoded, sample, record)
+          assign_key_value(event, record)
 
           event["sflow_type"] = 'counter'
           events.push(event)
