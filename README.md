@@ -1,9 +1,10 @@
 # Logstash Codec SFlow Plugin
 ## Description
-Logstash codec plugin to decode sflow codec
+Logstash codec plugin to decode sflow codec.
+
 This codec manage flow sample and counter flow.
 
-For the flow sample it is able to decode Ethernet, IPv4, UDP and TCP header
+For the flow sample it is able to decode Ethernet, 802.1Q VLAN, IPv4, UDP and TCP header
 
 For the counter flow it is able to decode some records of type:
 

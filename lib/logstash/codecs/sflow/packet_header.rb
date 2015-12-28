@@ -90,7 +90,6 @@ class IPV4Header < BinData::Record
   end
 end
 
-
 # noinspection RubyResolve
 class IPHeader < BinData::Record
   mandatory_parameter :size_header
@@ -104,6 +103,21 @@ class IPHeader < BinData::Record
 end
 
 # noinspection RubyResolve
+class VLANHeader < BinData::Record
+  mandatory_parameter :size_header
+
+  endian :big
+  bit3 :vlan_priority
+  bit1 :vlan_cfi
+  bit12 :vlan_id
+  uint16 :eth_type
+  choice :layer3, :selection => :eth_type do
+    ip_header 2048, :size_header => lambda { size_header - (4 * 8) }
+    unknown_header :default, :size_header => lambda { size_header - (4 * 8) }
+  end
+end
+
+# noinspection RubyResolve
 class EthernetHeader < BinData::Record
   mandatory_parameter :size_header
 
@@ -113,6 +127,7 @@ class EthernetHeader < BinData::Record
   uint16 :eth_type
   choice :layer3, :selection => :eth_type do
     ip_header 2048, :size_header => lambda { size_header - (14 * 8) }
+    vlan_header 33024, :size_header => lambda { size_header - (14 * 8) }
     unknown_header :default, :size_header => lambda { size_header - (14 * 8) }
   end
 end

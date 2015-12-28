@@ -23,9 +23,13 @@ class LogStash::Codecs::Sflow < LogStash::Codecs::Base
   # def initialize
 
   def assign_key_value(event, bindata_kv)
-    bindata_kv.each_pair do |k, v|
-      unless @removed_field.include? k.to_s
-        event["#{k.to_s}"] = v.to_s
+    if bindata_kv.nil?
+      @logger.warn("Ignoring bindata_kv for event #{event}")
+    else
+      bindata_kv.each_pair do |k, v|
+        unless @removed_field.include? k.to_s
+          event["#{k.to_s}"] = v.to_s
+        end
       end
     end
   end
@@ -84,7 +88,7 @@ class LogStash::Codecs::Sflow < LogStash::Codecs::Base
           unless record['record_data']['sample_header'].to_s.eql? ''
             assign_key_value(event, record['record_data']['sample_header'])
 
-            if record['record_data']['sample_header'].has_key?('layer3')
+            if record['record_data']['sample_header'].has_key?('layer3') and record['record_data']['sample_header']['layer3'].has_key?('header')
               assign_key_value(event, record['record_data']['sample_header']['layer3']['header'])
               assign_key_value(event, record['record_data']['sample_header']['layer3']['header']['layer4'])
             end
