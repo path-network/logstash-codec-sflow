@@ -81,8 +81,8 @@ end
 
 
 describe EthernetHeader do
-  it "should decode ipv4 over udp header" do
-    payload = IO.read(File.join(File.dirname(__FILE__), "ethernet_ipv4_over_udp_header.dat"), :mode => "rb")
+  it "should decode ethernet ipv4 udp header" do
+    payload = IO.read(File.join(File.dirname(__FILE__), "ethernet_ipv4_udp_header.dat"), :mode => "rb")
     decoded = EthernetHeader.new(:size_header => payload.bytesize * 8).read(payload)
 
     decoded["eth_dst"].to_s.should eq("00:23:e9:78:16:c6")
@@ -90,5 +90,19 @@ describe EthernetHeader do
     decoded["eth_type"].to_s.should eq("2048")
     decoded["layer3"]["header"]["dst_ip"].to_s.should eq("10.243.27.9")
     decoded["layer3"]["header"]["layer4"]["dst_port"].to_s.should eq("514")
+  end
+end
+
+
+describe EthernetHeader do
+  it "should decode ethernet vlan ipv4 tcp header" do
+    payload = IO.read(File.join(File.dirname(__FILE__), "ethernet_vlan_ipv4_tcp_header.dat"), :mode => "rb")
+    decoded = EthernetHeader.new(:size_header => payload.bytesize * 8).read(payload)
+
+    decoded["eth_dst"].to_s.should eq("a0:36:9f:71:d2:e0")
+    decoded["eth_src"].to_s.should eq("00:09:0f:09:37:1c")
+    decoded["eth_type"].to_s.should eq("33024")
+    decoded["layer3"]["vlan_id"].to_s.should eq("2422")
+    decoded["layer3"]["vlan_type"].to_s.should eq("2048")
   end
 end

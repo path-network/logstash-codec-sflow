@@ -110,8 +110,8 @@ class VLANHeader < BinData::Record
   bit3 :vlan_priority
   bit1 :vlan_cfi
   bit12 :vlan_id
-  uint16 :eth_type
-  choice :layer3, :selection => :eth_type do
+  uint16 :vlan_type
+  choice :layer3, :selection => :vlan_type do
     ip_header 2048, :size_header => lambda { size_header - (4 * 8) }
     unknown_header :default, :size_header => lambda { size_header - (4 * 8) }
   end
