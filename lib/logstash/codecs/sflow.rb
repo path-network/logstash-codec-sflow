@@ -9,16 +9,28 @@ class LogStash::Codecs::Sflow < LogStash::Codecs::Base
   # Specify which Sflow versions you will accept.
   config :versions, :validate => :array, :default => [5]
 
-  # Specify which sflow must not be send in the event
-  config :optional_removed_field, :validate => :array, :default => %w(sflow_version ip_version header_size ip_header_length ip_dscp ip_ecn ip_total_length ip_identification ip_flags ip_fragment_offset ip_ttl ip_checksum ip_options tcp_seq_number tcp_ack_number tcp_header_length tcp_reserved tcp_is_nonce tcp_is_cwr tcp_is_ecn_echo tcp_is_urgent tcp_is_ack tcp_is_push tcp_is_reset tcp_is_syn tcp_is_fin tcp_window_size tcp_checksum tcp_urgent_pointer tcp_options)
+  # Specify which sflow fields must not be send in the event
+  config :optional_removed_field, :validate => :array, :default => %w(sflow_version ip_version header_size
+ ip_header_length ip_dscp ip_ecn ip_total_length ip_identification ip_flags ip_fragment_offset ip_ttl ip_checksum
+ ip_options tcp_seq_number tcp_ack_number tcp_header_length tcp_reserved tcp_is_nonce tcp_is_cwr tcp_is_ecn_echo
+ tcp_is_urgent tcp_is_ack tcp_is_push tcp_is_reset tcp_is_syn tcp_is_fin tcp_window_size tcp_checksum
+ tcp_urgent_pointer tcp_options vlan_cfi sequence_number flow_sequence_number vlan_type udp_length udp_checksum)
 
+  # Specify if codec must perform SNMP call so agent_ip for interface resolution.
+  config :snmp_interface, :validate => :boolean, :default => true
+
+  # Specify if codec must perform SNMP call so agent_ip for interface resolution.
+  config :snmp_community, :validate => :string, :default => 'public'
+
+  # Specify the max number of element in the interface resolution local cache (only if snmp_interface true)
+  config :interface_cache_size, :validate => :number, :default => 1000
+
+  # Specify the duration for each element in the interface resolution local cache (only if snmp_interface true)
+  config :interface_cache_ttl, :validate => :number, :default => 3600
 
   def initialize(params = {})
     super(params)
     @threadsafe = false
-    # noinspection RubyResolve
-    #@removed_field = %w(records record_data record_length record_count record_entreprise record_format samples sample_data sample_entreprise sample_format sample_length sample_count sample_header layer3 layer4 layer4_data header data) | @optional_removed_field
-    @removed_field = %w(record_length record_count record_entreprise record_format sample_entreprise sample_format sample_length sample_count sample_header data) | @optional_removed_field
   end
 
   # def initialize
@@ -42,13 +54,40 @@ class LogStash::Codecs::Sflow < LogStash::Codecs::Base
   # @param [Object] sample
   # @param [Object] record
   def common_sflow(event, decoded, sample)
+    event['agent_ip'] = decoded['agent_ip'].to_s
     assign_key_value(event, decoded)
     assign_key_value(event, sample)
+  end
+
+  def snmp_call(event)
+    if @snmp_interface
+      if event.include?('source_id_index')
+        event["source_id_index"] = @snmp.get_interface(event["agent_ip"], event["source_id_index"])
+      end
+      if event.include?('input_interface')
+        event["input_interface"] = @snmp.get_interface(event["agent_ip"], event["input_interface"])
+      end
+      if event.include?('output_interface')
+        event["output_interface"] = @snmp.get_interface(event["agent_ip"], event["output_interface"])
+      end
+      if event.include?('interface_index')
+        event["interface_index"] = @snmp.get_interface(event["agent_ip"], event["interface_index"])
+      end
+    end
   end
 
   public
   def register
     require 'logstash/codecs/sflow/datagram'
+    require 'logstash/codecs/snmp/interface_resolver'
+
+    # noinspection RubyResolve
+    @removed_field = %w(record_length record_count record_entreprise record_format sample_entreprise sample_format
+ sample_length sample_count sample_header data storage) | @optional_removed_field
+
+    if @snmp_interface
+      @snmp = SNMPInterfaceResolver.new(@snmp_community, @interface_cache_size, @interface_cache_ttl)
+    end
   end
 
   # def register
@@ -75,7 +114,7 @@ class LogStash::Codecs::Sflow < LogStash::Codecs::Base
       #treat sample flow
       if sample['sample_entreprise'] == 0 && sample['sample_format'] == 1
         # Create the logstash event
-        event = LogStash::Event.new
+        event = LogStash::Event.new({})
         common_sflow(event, decoded, sample)
 
         sample['sample_data']['records'].each do |record|
@@ -94,6 +133,10 @@ class LogStash::Codecs::Sflow < LogStash::Codecs::Base
         end
 
         event["sflow_type"] = 'sample'
+
+        #Get interface dfescr if snmp_interface true
+        snmp_call(event)
+
         events.push(event)
 
         #treat counter flow
@@ -106,12 +149,16 @@ class LogStash::Codecs::Sflow < LogStash::Codecs::Base
           end
 
           # Create the logstash event
-          event = LogStash::Event.new
+          event = LogStash::Event.new({})
           common_sflow(event, decoded, sample)
 
           assign_key_value(event, record)
 
           event["sflow_type"] = 'counter'
+
+          #Get interface dfescr if snmp_interface true
+          snmp_call(event)
+
           events.push(event)
         end
       end
