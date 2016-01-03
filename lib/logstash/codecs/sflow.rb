@@ -62,16 +62,16 @@ class LogStash::Codecs::Sflow < LogStash::Codecs::Base
   def snmp_call(event)
     if @snmp_interface
       if event.include?('source_id_index')
-        event["source_id_index"] = @snmp.get_interface(event["agent_ip"], event["source_id_index"])
+        event["source_id_index_descr"] = @snmp.get_interface(event["agent_ip"], event["source_id_index"])
       end
       if event.include?('input_interface')
-        event["input_interface"] = @snmp.get_interface(event["agent_ip"], event["input_interface"])
+        event["input_interface_descr"] = @snmp.get_interface(event["agent_ip"], event["input_interface"])
       end
       if event.include?('output_interface')
-        event["output_interface"] = @snmp.get_interface(event["agent_ip"], event["output_interface"])
+        event["output_interface_descr"] = @snmp.get_interface(event["agent_ip"], event["output_interface"])
       end
       if event.include?('interface_index')
-        event["interface_index"] = @snmp.get_interface(event["agent_ip"], event["interface_index"])
+        event["interface_index_descr"] = @snmp.get_interface(event["agent_ip"], event["interface_index"])
       end
     end
   end
