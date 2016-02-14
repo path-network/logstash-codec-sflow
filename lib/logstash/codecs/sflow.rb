@@ -61,17 +61,19 @@ class LogStash::Codecs::Sflow < LogStash::Codecs::Base
 
   def snmp_call(event)
     if @snmp_interface
-      if event.include?('source_id_index')
-        event["source_id_index_descr"] = @snmp.get_interface(event["agent_ip"], event["source_id_index"])
-      end
-      if event.include?('input_interface')
-        event["input_interface_descr"] = @snmp.get_interface(event["agent_ip"], event["input_interface"])
-      end
-      if event.include?('output_interface')
-        event["output_interface_descr"] = @snmp.get_interface(event["agent_ip"], event["output_interface"])
-      end
-      if event.include?('interface_index')
-        event["interface_index_descr"] = @snmp.get_interface(event["agent_ip"], event["interface_index"])
+      if event.include?('source_id_type') and event['source_id_type'].to_s == '0'
+        if event.include?('source_id_index')
+          event["source_id_index_descr"] = @snmp.get_interface(event["agent_ip"], event["source_id_index"])
+        end
+        if event.include?('input_interface')
+          event["input_interface_descr"] = @snmp.get_interface(event["agent_ip"], event["input_interface"])
+        end
+        if event.include?('output_interface')
+          event["output_interface_descr"] = @snmp.get_interface(event["agent_ip"], event["output_interface"])
+        end
+        if event.include?('interface_index')
+          event["interface_index_descr"] = @snmp.get_interface(event["agent_ip"], event["interface_index"])
+        end
       end
     end
   end
@@ -86,7 +88,7 @@ class LogStash::Codecs::Sflow < LogStash::Codecs::Base
  sample_length sample_count sample_header data storage) | @optional_removed_field
 
     if @snmp_interface
-      @snmp = SNMPInterfaceResolver.new(@snmp_community, @interface_cache_size, @interface_cache_ttl)
+      @snmp = SNMPInterfaceResolver.new(@snmp_community, @interface_cache_size, @interface_cache_ttl, @logger)
     end
   end
 
