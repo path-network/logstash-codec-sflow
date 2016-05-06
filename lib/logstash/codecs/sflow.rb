@@ -10,14 +10,14 @@ class LogStash::Codecs::Sflow < LogStash::Codecs::Base
   config :versions, :validate => :array, :default => [5]
 
   # Specify which sflow fields must not be send in the event
-  config :optional_removed_field, :validate => :array, :default => %w(sflow_version ip_version header_size
+  config :optional_removed_field, :validate => :array, :default => %w(sflow_version header_size
  ip_header_length ip_dscp ip_ecn ip_total_length ip_identification ip_flags ip_fragment_offset ip_ttl ip_checksum
  ip_options tcp_seq_number tcp_ack_number tcp_header_length tcp_reserved tcp_is_nonce tcp_is_cwr tcp_is_ecn_echo
  tcp_is_urgent tcp_is_ack tcp_is_push tcp_is_reset tcp_is_syn tcp_is_fin tcp_window_size tcp_checksum
  tcp_urgent_pointer tcp_options vlan_cfi sequence_number flow_sequence_number vlan_type udp_length udp_checksum)
 
   # Specify if codec must perform SNMP call so agent_ip for interface resolution.
-  config :snmp_interface, :validate => :boolean, :default => true
+  config :snmp_interface, :validate => :boolean, :default => false
 
   # Specify if codec must perform SNMP call so agent_ip for interface resolution.
   config :snmp_community, :validate => :string, :default => 'public'
@@ -141,7 +141,7 @@ class LogStash::Codecs::Sflow < LogStash::Codecs::Base
 
         events.push(event)
 
-        #treat counter flow
+      #treat counter flow
       elsif sample['sample_entreprise'] == 0 && sample['sample_format'] == 2
         sample['sample_data']['records'].each do |record|
           # Ensure that some data exist for the record
