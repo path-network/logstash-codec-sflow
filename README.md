@@ -14,6 +14,55 @@ For the counter flow it is able to decode some records of type:
 - Processor Information
 - HTTP
 
+## TO DO
+Currently this plugin does not manage all sflow counter and is not able to decode
+all kind of protocols.
+If needed you can aks for some to be added.
+Please provide a pcap file containing the sflow events of the counter/protocol
+to add in order to be able to implement it.
+
+## Human Readable Protocol
+In order to translate protocols value to a human readable protocol, you can use the
+logstash-filter-translate plugin
+```
+filter {
+      translate {
+        field => protocol
+        dictionary => [ "1", "ETHERNET",
+                        "11", "IP"
+                      ]
+        fallback => "UNKNOWN"
+        destination => protocol
+        override => true
+      }
+      translate {
+        field => eth_type
+        dictionary => [ "2048", "IP",
+                        "33024", "802.1Q VLAN"
+                      ]
+        fallback => "UNKNOWN"
+        destination => eth_type
+        override => true
+      }
+      translate {
+        field => vlan_type
+        dictionary => [ "2048", "IP"
+                      ]
+        fallback => "UNKNOWN"
+        destination => vlan_type
+        override => true
+      }
+      translate {
+        field => ip_protocol
+        dictionary => [ "6", "TCP",
+                        "17", "UDP"
+                      ]
+        fallback => "UNKNOWN"
+        destination => ip_protocol
+        override => true
+      }
+}
+```
 
 [![Build
 Status](http://build-eu-00.elastic.co/view/LS%20Plugins/view/LS%20Codecs/job/logstash-plugin-codec-example-unit/badge/icon)](http://build-eu-00.elastic.co/view/LS%20Plugins/view/LS%20Codecs/job/logstash-plugin-codec-example-unit/)
