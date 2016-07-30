@@ -26,7 +26,7 @@ class EthernetFrameData < BinData::Record
   skip :length => 2
   sflow_mac_address :dst_mac
   skip :length => 2
-  uint32 :type
+  uint32 :eth_type
 end
 
 # noinspection RubyResolve
@@ -39,7 +39,7 @@ class IP4Data < BinData::Record
   uint32 :src_port
   uint32 :dst_port
   uint32 :tcp_flags
-  uint32 :type
+  uint32 :ip_type
 end
 
 # noinspection RubyResolve
