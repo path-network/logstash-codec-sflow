@@ -55,7 +55,6 @@ class UdpHeader < BinData::Record
   uint16 :dst_port
   uint16 :udp_length
   uint16 :udp_checksum
-  #skip :length => lambda { udp_length - 64 } #skip udp data
   bit :data, :nbits => lambda { size_header - 64 } #skip udp data
 end
 
