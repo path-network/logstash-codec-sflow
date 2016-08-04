@@ -6,6 +6,8 @@ require 'logstash/codecs/sflow/packet_header'
 
 # noinspection RubyResolve
 class RawPacketHeader < BinData::Record
+  mandatory_parameter :record_length
+
   endian :big
   uint32 :protocol
   uint32 :frame_length
@@ -16,6 +18,7 @@ class RawPacketHeader < BinData::Record
     ip_header 11, :size_header => lambda { header_size * 8 }
     skip :default, :length => :header_size
   end
+  bit :padded, :nbits => lambda { (record_length - (header_size + 16)) * 8 } #padded data
 end
 
 # noinspection RubyResolve

@@ -21,7 +21,7 @@ class FlowSample < BinData::Record
     bit12 :record_format
     uint32 :record_length
     choice :record_data, :selection => lambda { "#{record_entreprise}-#{record_format}" } do
-      raw_packet_header '0-1'
+      raw_packet_header '0-1', :record_length => :record_length
       ethernet_frame_data '0-2'
       ip4_data '0-3'
       ip6_data '0-4'
