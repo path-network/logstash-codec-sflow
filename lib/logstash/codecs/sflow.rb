@@ -107,16 +107,18 @@ class LogStash::Codecs::Sflow < LogStash::Codecs::Base
     events = []
 
     decoded['samples'].each do |sample|
+      @logger.debug("sample: #{sample}")
       #Treat case with no flow decoded (Unknown flow)
       if sample['sample_data'].to_s.eql? ''
         @logger.warn("Unknown sample entreprise #{sample['sample_entreprise'].to_s} - format #{sample['sample_format'].to_s}")
         next
       end
 
-      #treat sample flow
-      if sample['sample_entreprise'] == 0 && sample['sample_format'] == 1
+      #treat sample flow and expanded sample flow
+      if sample['sample_entreprise'] == 0 && (sample['sample_format'] == 1 || sample['sample_format'] == 3)
         # Create the logstash event
         event = LogStash::Event.new({})
+
         common_sflow(event, decoded, sample)
 
         sample['sample_data']['records'].each do |record|
@@ -134,15 +136,19 @@ class LogStash::Codecs::Sflow < LogStash::Codecs::Base
           event["frame_length_times_sampling_rate"] = event['frame_length'].to_i * event['sampling_rate'].to_i
         end
 
-        event["sflow_type"] = 'sample'
+        if sample['sample_format'] == 1
+          event["sflow_type"] = 'flow_sample'
+        else
+          event["sflow_type"] = 'expanded_flow_sample'
+        end
 
         #Get interface dfescr if snmp_interface true
         snmp_call(event)
 
         events.push(event)
 
-      #treat counter flow
-      elsif sample['sample_entreprise'] == 0 && sample['sample_format'] == 2
+      #treat counter flow and expanded counter flow
+      elsif sample['sample_entreprise'] == 0 && (sample['sample_format'] == 2 || sample['sample_format'] == 4)
         sample['sample_data']['records'].each do |record|
           # Ensure that some data exist for the record
           if record['record_data'].to_s.eql? ''
@@ -156,7 +162,12 @@ class LogStash::Codecs::Sflow < LogStash::Codecs::Base
 
           assign_key_value(event, record)
 
-          event["sflow_type"] = 'counter'
+          if sample['sample_format'] == 2
+            event["sflow_type"] = 'counter_sample'
+          else
+            event["sflow_type"] = 'expanded_counter_sample'
+          end
+
 
           #Get interface dfescr if snmp_interface true
           snmp_call(event)

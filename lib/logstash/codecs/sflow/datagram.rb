@@ -30,6 +30,8 @@ class SFlow < BinData::Record
     choice :sample_data, :selection => lambda { "#{sample_entreprise}-#{sample_format}" } do
       flow_sample '0-1'
       counter_sample '0-2'
+      expanded_flow_sample '0-3'
+      expanded_counter_sample '0-4'
       skip :default, :length => :sample_length
     end
   end
