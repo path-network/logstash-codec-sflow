@@ -4,9 +4,9 @@ Logstash codec plugin to decode sflow codec.
 
 This codec manage flow sample, counter flow, expanded flow sample and expanded counter flow
 
-For the (Expanded) flow sample it is able to decode Ethernet, 802.1Q VLAN, IPv4, UDP and TCP header
+For the (expanded) flow sample it is able to decode Ethernet, 802.1Q VLAN, IPv4, UDP and TCP header
 
-For the (Expanded) counter flow it is able to decode some records of type:
+For the (expanded) counter flow it is able to decode some records of type:
 
 - Generic Interface
 - Ethernet Interface
@@ -20,6 +20,25 @@ all kind of protocols.
 If needed you can aks for some to be added.
 Please provide a pcap file containing the sflow events of the counter/protocol
 to add in order to be able to implement it.
+
+## Tune reported fields
+By default all those fields are removed from the emitted event:
+    
+    %w(sflow_version header_size ip_header_length ip_dscp ip_ecn ip_total_length ip_identification ip_flags 
+    ip_fragment_offset ip_ttl ip_checksum ip_options tcp_seq_number tcp_ack_number tcp_header_length tcp_reserved 
+    tcp_is_nonce tcp_is_cwr tcp_is_ecn_echo tcp_is_urgent tcp_is_ack tcp_is_push tcp_is_reset tcp_is_syn tcp_is_fin 
+    tcp_window_size tcp_checksum tcp_urgent_pointer tcp_options vlan_cfi sequence_number flow_sequence_number vlan_type 
+    udp_length udp_checksum)
+    
+You can tune the list of removed fields by setting this parameter to the sflow codec *optional_removed_field*
+
+## frame_length_times_sampling_rate output field on (expanded) flow sample
+
+This field is the length of the frame times the sampling rate. It permits to approximate the number of bits send/receive 
+on an interface/socket.
+
+You must first ensure to have well configured the sampling rate to have an accurate output metric (See: http://blog.sflow.com/2009/06/sampling-rates.html)
+
 
 ## Human Readable Protocol
 In order to translate protocols value to a human readable protocol, you can use the
@@ -55,7 +74,8 @@ filter {
       translate {
         field => ip_protocol
         dictionary => [ "6", "TCP",
-                        "17", "UDP"
+                        "17", "UDP",
+                        "50", "Encapsulating Security Payload"
                       ]
         fallback => "UNKNOWN"
         destination => ip_protocol
