@@ -24,4 +24,9 @@ describe SFlow do
     payload = IO.read(File.join(File.dirname(__FILE__), "sflow_flow_sample_eth_vlan.dat"), :mode => "rb")
     SFlow.read(payload)
   end
+
+  it "should decode sflow with lag counters" do
+    payload = IO.read(File.join(File.dirname(__FILE__), "sflow_with_lag_counters.dat"), :mode => "rb")
+    SFlow.read(payload)
+  end
 end

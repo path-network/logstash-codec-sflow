@@ -127,3 +127,25 @@ class HttpCounters < BinData::Record
   uint32 :status_5XX_count
   uint32 :status_other_count
 end
+
+# noinspection RubyResolve
+class LagPortStats < BinData::Record
+  endian :big
+  sflow_mac_address :dot3adAggPortActorSystemID
+  skip :length => 2
+  sflow_mac_address :dot3adAggPortPartnerOperSystemID
+  skip :length => 2
+  uint32 :dot3adAggPortAttachedAggID
+  bit8 :dot3adAggPortActorAdminState
+  bit8 :dot3adAggPortActorOperState
+  bit8 :dot3adAggPortPartnerAdminState
+  bit8 :dot3adAggPortPartnerOperState
+  uint32 :dot3adAggPortStatsLACPDUsRx
+  uint32 :dot3adAggPortStatsMarkerPDUsRx
+  uint32 :dot3adAggPortStatsMarkerResponsePDUsRx
+  uint32 :dot3adAggPortStatsUnknownRx
+  uint32 :dot3adAggPortStatsIllegalRx
+  uint32 :dot3adAggPortStatsLACPDUsTx
+  uint32 :dot3adAggPortStatsMarkerPDUsTx
+  uint32 :dot3adAggPortStatsMarkerResponsePDUsTx
+end

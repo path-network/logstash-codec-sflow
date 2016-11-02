@@ -13,6 +13,7 @@ For the (expanded) counter flow it is able to decode some records of type:
 - VLAN
 - Processor Information
 - HTTP
+- LAG
 
 ## TO DO
 Currently this plugin does not manage all sflow counter and is not able to decode

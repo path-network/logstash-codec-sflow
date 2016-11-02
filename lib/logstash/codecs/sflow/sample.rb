@@ -104,6 +104,7 @@ class ExpandedCounterSample < BinData::Record
       token_ring '0-3'
       hundred_base_vg '0-4'
       vlan '0-5'
+      lag_port_stats '0-7'
       processor_information '0-1001'
       http_counters '0-2201'
       skip :default, :length => :record_length
