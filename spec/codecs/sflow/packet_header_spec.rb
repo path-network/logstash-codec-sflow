@@ -1,6 +1,6 @@
 # encoding: utf-8
 
-require "logstash/devutils/rspec/spec_helper"
+#require "logstash/devutils/rspec/spec_helper"
 require "logstash/codecs/sflow/packet_header"
 
 describe UdpHeader do
