@@ -181,6 +181,6 @@ class LogStash::Codecs::Sflow < LogStash::Codecs::Base
       yield event
     end
     rescue BinData::ValidityError, IOError => e
-      @logger.warn("Invalid netflow packet received (#{e})")
+      @logger.warn("Invalid sflow packet received (#{e})")
   end # def decode
 end # class LogStash::Filters::Sflow
