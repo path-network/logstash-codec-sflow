@@ -182,6 +182,6 @@ class LogStash::Codecs::Sflow < LogStash::Codecs::Base
     end
   rescue BinData::ValidityError, EOFError, IOError, RangeError => e
     @logger.warn("Invalid sflow packet received (#{e})")
-    Sflow.instance_variables.each { |ivar| puts "#{ivar}: #{Sflow.instance_variable_get(ivar)}" }
+#    Sflow.instance_variables.each { |ivar| puts "#{ivar}: #{Sflow.instance_variable_get(ivar)}" }
   end # def decode
 end # class LogStash::Filters::Sflow
