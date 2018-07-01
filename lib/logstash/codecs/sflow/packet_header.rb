@@ -89,6 +89,27 @@ class IPV4Header < BinData::Record
   end
 end
 
+# noinspection RubyResolve,RubyResolve
+class IPV6Header < BinData::Record
+  mandatory_parameter :size_header
+
+  endian :big
+  bit4 :ip_version
+  bit6 :ip_dscp
+  bit2 :ip_ecn
+  bit20 :ipv6_flow_label
+  uint16 :ip_total_length
+  uint8 :ip_protocol
+  uint8 :ipv6_hop_limit
+  sflow_ip6_addr :src_ip
+  sflow_ip6_addr :dst_ip
+  choice :ip_data, :selection => :ip_protocol do
+    tcp_header 6, :size_header => lambda { size_header - 320 }
+    udp_header 17, :size_header => lambda { size_header - 320 }
+    unknown_header :default, :size_header => lambda { size_header - 320 }
+  end
+end
+
 # noinspection RubyResolve
 class IPHeader < BinData::Record
   mandatory_parameter :size_header
@@ -126,6 +147,7 @@ class EthernetHeader < BinData::Record
   uint16 :eth_type
   choice :eth_data, :selection => :eth_type do
     ip_header 2048, :size_header => lambda { size_header - (14 * 8) }
+    ipv6_header 34525, :size_header => lambda { size_header - (14 * 8) }
     vlan_header 33024, :size_header => lambda { size_header - (14 * 8) }
     unknown_header :default, :size_header => lambda { size_header - (14 * 8) }
   end
