@@ -61,7 +61,7 @@ class LogStash::Codecs::Sflow < LogStash::Codecs::Base
 
   def snmp_call(event)
     if @snmp_interface
-      if event.include?('source_id_type') and event['source_id_type'].to_s == '0'
+      if event.include?('source_id_type') and event.get('source_id_type').to_s == '0'
         if event.include?('source_id_index')
           event.set('source_id_index_descr', @snmp.get_interface(event.get('agent_ip'), event.get('source_id_index')))
         end
