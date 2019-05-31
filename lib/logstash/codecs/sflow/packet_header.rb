@@ -78,10 +78,22 @@ class IPV4Header < BinData::Record
   array :ip_options, :initial_length => lambda { (((ip_header_length * 4) - 20)/4).ceil }, :onlyif => :is_options? do
     string :ip_option, :length => 4, :pad_byte => "\0"
   end
-  choice :ip_data, :selection => :ip_protocol do
+  choice :ip_data, :selection => :ip_protocol, :onlyif => lambda { has_data?(size_header) } do
     tcp_header 6, :size_header => lambda { size_header - (ip_header_length * 4 * 8) }
     udp_header 17, :size_header => lambda { size_header - (ip_header_length * 4 * 8) }
     unknown_header :default, :size_header => lambda { size_header - (ip_header_length * 4 * 8) }
+  end
+
+  def has_data?(size_header)
+    bytes_left = size_header / 8 - ip_header_length * 4
+    case ip_protocol
+    when 6
+      return bytes_left >= 20
+    when 17
+      return bytes_left >= 8
+    else
+      return true
+    end
   end
 
   def is_options?
