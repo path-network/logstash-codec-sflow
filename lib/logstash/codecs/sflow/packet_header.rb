@@ -39,7 +39,7 @@ class TcpHeader < BinData::Record
   array :tcp_options, :initial_length => lambda { (((tcp_header_length * 4) - 20)/4).ceil }, :onlyif => :is_options? do
     string :tcp_option, :length => 4, :pad_byte => "\0"
   end
-  bit :data, :nbits => lambda { size_header - (tcp_header_length * 4 * 8) }
+  bit :data, :nbits => lambda { size_header - data.rel_offset * 8 }
 
   def is_options?
     tcp_header_length.to_i > 5
