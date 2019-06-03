@@ -36,13 +36,13 @@ class TcpHeader < BinData::Record
   uint16 :tcp_window_size
   uint16 :tcp_checksum
   uint16 :tcp_urgent_pointer
-  array :tcp_options, :initial_length => lambda { (((tcp_header_length * 4) - 20)/4).ceil }, :onlyif => :is_options? do
+  array :tcp_options, :initial_length => lambda { tcp_header_length - 5 }, :onlyif => lambda { is_options?(size_header) } do
     string :tcp_option, :length => 4, :pad_byte => "\0"
   end
   bit :data, :nbits => lambda { size_header - data.rel_offset * 8 }
 
-  def is_options?
-    tcp_header_length.to_i > 5
+  def is_options?(size_header)
+    tcp_header_length.to_i > 5 and size_header >= tcp_header_length * 4 * 8
   end
 end
 
