@@ -184,6 +184,66 @@ class ExtendedVlanTunnel < BinData::Record
 end
 
 # noinspection RubyResolve
+class ExtendedL2TunnelEgress < BinData::Record
+  endian :big
+  ethernet_frame_data :header
+end
+
+# noinspection RubyResolve
+class ExtendedL2TunnelIngress < BinData::Record
+  endian :big
+  ethernet_frame_data :header
+end
+
+# noinspection RubyResolve
+class ExtendedIpv4TunnelEgress < BinData::Record
+  endian :big
+  ip4_data :header
+end
+
+# noinspection RubyResolve
+class ExtendedIpv4TunnelIngress < BinData::Record
+  endian :big
+  ip4_data :header
+end
+
+# noinspection RubyResolve
+class ExtendedIpv6TunnelEgress < BinData::Record
+  endian :big
+  ip6_data :header
+end
+
+# noinspection RubyResolve
+class ExtendedIpv6TunnelIngress < BinData::Record
+  endian :big
+  ip6_data :header
+end
+
+# noinspection RubyResolve
+class ExtendedDecapsulateEgress < BinData::Record
+  endian :big
+  uint32 :inner_header_offset
+end
+
+# noinspection RubyResolve
+class ExtendedDecapsulateIngress < BinData::Record
+  endian :big
+  uint32 :inner_header_offset
+end
+
+# noinspection RubyResolve
+class ExtendedVniEgress < BinData::Record
+  endian :big
+  uint32 :vni
+end
+
+# noinspection RubyResolve
+class ExtendedVniIngress < BinData::Record
+  endian :big
+  uint32 :vni
+end
+
+# noinspection RubyResolve
 class ExtendedSocketIpv4 < BinData::Record
   endian :big
   uint32 :protocol
