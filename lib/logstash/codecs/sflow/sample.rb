@@ -13,6 +13,8 @@ class FlowSampleRecordData < BinData::Choice
   ip6_data '0-4'
   extended_switch_data '0-1001'
   extended_router_data '0-1002'
+  extended_socket_ipv4 '0-2100'
+  extended_socket_ipv6 '0-2101'
   skip :default, :length => :record_length
 end
 
@@ -27,6 +29,18 @@ class CounterSampleRecordData < BinData::Choice
   processor_information '0-1001'
   of_port '0-1004'
   port_name '0-1005'
+  host_descr '0-2000'
+  host_adapters '0-2001'
+  host_parent '0-2002'
+  host_cpu '0-2003'
+  host_memory '0-2004'
+  host_disk_io '0-2005'
+  host_net_io '0-2006'
+  virt_node '0-2100'
+  virt_cpu '0-2101'
+  virt_memory '0-2102'
+  virt_disk_io '0-2103'
+  virt_net_io '0-2104'
   http_counters '0-2201'
   skip :default, :length => :record_length
 end

@@ -78,3 +78,22 @@ class ExtendedRouterData < BinData::Record
   uint32 :src_mask_len
   uint32 :dst_mask_len
 end
+# noinspection RubyResolve
+class ExtendedSocketIpv4 < BinData::Record
+  endian :big
+  uint32 :protocol
+  sflow_ip4_addr :local_ip
+  sflow_ip4_addr :remote_ip
+  uint32 :local_port
+  uint32 :remote_port
+end
+
+# noinspection RubyResolve
+class ExtendedSocketIpv6 < BinData::Record
+  endian :big
+  uint32 :protocol
+  sflow_ip6_addr :local_ip
+  sflow_ip6_addr :remote_ip
+  uint32 :local_port
+  uint32 :remote_port
+end

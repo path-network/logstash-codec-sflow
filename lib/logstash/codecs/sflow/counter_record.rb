@@ -161,3 +161,153 @@ class LagPortStats < BinData::Record
   uint32 :dot3adAggPortStatsMarkerPDUsTx
   uint32 :dot3adAggPortStatsMarkerResponsePDUsTx
 end
+
+# noinspection RubyResolve
+class HostDescr < BinData::Record
+  endian :big
+  sflow_string :hostname
+  array :uuid, :type => :uint8, :initial_length => 16
+  uint32 :machine_type
+  uint32 :os_name
+  sflow_string :os_release
+end
+
+# noinspection RubyResolve
+class HostAdapters < BinData::Record
+  endian :big
+  uint32 :adapters_count
+  array :adapters, :initial_length => :adapters_count do
+    uint32 :if_index
+    uint32 :mac_address_count
+    array :mac_addresses, :initial_length => :mac_address_count do
+      sflow_mac_address :mac_address
+      skip :length => 2
+    end
+  end
+end
+
+# noinspection RubyResolve
+class HostParent < BinData::Record
+  endian :big
+  uint32 :container_type
+  uint32 :container_index
+end
+
+# noinspection RubyResolve
+class HostCpu < BinData::Record
+  endian :big
+  float_be :load_one
+  float_be :load_five
+  float_be :load_fifteen
+  uint32 :proc_run
+  uint32 :proc_total
+  uint32 :cpu_num
+  uint32 :cpu_speed
+  uint32 :uptime
+  uint32 :cpu_user
+  uint32 :cpu_nice
+  uint32 :cpu_system
+  uint32 :cpu_idle
+  uint32 :cpu_wio
+  uint32 :cpu_intr
+  uint32 :cpu_sintr
+  uint32 :interrupts
+  uint32 :contexts
+  uint32 :cpu_steal
+  uint32 :cpu_guest
+  uint32 :cpu_guest_nice
+end
+
+# noinspection RubyResolve
+class HostMemory < BinData::Record
+  endian :big
+  uint64 :mem_total
+  uint64 :mem_free
+  uint64 :mem_shared
+  uint64 :mem_buffers
+  uint64 :mem_cached
+  uint64 :swap_total
+  uint64 :swap_free
+  uint32 :page_in
+  uint32 :page_out
+  uint32 :swap_in
+  uint32 :swap_out
+end
+
+# noinspection RubyResolve
+class HostDiskIo < BinData::Record
+  endian :big
+  uint64 :disk_total
+  uint64 :disk_free
+  uint32 :part_max_used_percent
+  uint32 :reads
+  uint64 :bytes_read
+  uint32 :read_time
+  uint32 :writes
+  uint64 :bytes_written
+  uint32 :write_time
+end
+
+# noinspection RubyResolve
+class HostNetIo < BinData::Record
+  endian :big
+  uint64 :bytes_in
+  uint32 :pkts_in
+  uint32 :errs_in
+  uint32 :drops_in
+  uint64 :bytes_out
+  uint32 :packets_out
+  uint32 :errs_out
+  uint32 :drops_out
+end
+
+# noinspection RubyResolve
+class VirtNode < BinData::Record
+  endian :big
+  uint32 :mhz
+  uint32 :cpus
+  uint64 :memory
+  uint64 :memory_free
+  uint32 :num_domains
+end
+
+# noinspection RubyResolve
+class VirtCpu < BinData::Record
+  endian :big
+  uint32 :state
+  uint32 :cpu_time
+  uint32 :nr_virt_cpu
+end
+
+# noinspection RubyResolve
+class VirtMemory < BinData::Record
+  endian :big
+  uint64 :memory
+  uint64 :max_memory
+end
+
+# noinspection RubyResolve
+class VirtDiskIo < BinData::Record
+  endian :big
+  uint64 :capacity
+  uint64 :allocation
+  uint64 :physical
+  uint32 :rd_req
+  uint64 :rd_bytes
+  uint32 :wr_req
+  uint64 :wr_bytes
+  uint32 :errs
+end
+
+# noinspection RubyResolve
+class VirtNetIo < BinData::Record
+  endian :big
+  uint64 :rx_bytes
+  uint32 :rx_packets
+  uint32 :rx_errs
+  uint32 :rx_drop
+  uint64 :tx_bytes
+  uint32 :tx_packets
+  uint32 :tx_errs
+  uint32 :tx_drop
+end
