@@ -97,7 +97,6 @@ class Vlan < BinData::Record
   uint32 :discards
 end
 
-
 # noinspection RubyResolve
 class ProcessorInformation < BinData::Record
   endian :big
@@ -106,6 +105,19 @@ class ProcessorInformation < BinData::Record
   uint32 :five_min_cpu_percent
   uint64 :total_memory
   uint64 :free_memory
+end
+
+# noinspection RubyResolve
+class OfPort < BinData::Record
+  endian :big
+  uint64 :datapath_id
+  uint32 :port_no
+end
+
+# noinspection RubyResolve
+class PortName < BinData::Record
+  endian :big
+  sflow_string :name
 end
 
 # noinspection RubyResolve

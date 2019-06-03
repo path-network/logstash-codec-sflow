@@ -54,3 +54,20 @@ class SflowIP6Addr < BinData::Primitive
     }.pack('n8')).to_s
   end
 end
+
+# noinspection RubyResolve
+class SflowString < BinData::Primitive
+  endian :big
+  uint32 :read_length
+  string :data, :read_length => :read_length
+  skip :length => lambda { read_length % 4 }
+
+  def set(val)
+    self.read_length = val.length
+    self.data = val
+  end
+
+  def get
+    self.data
+  end
+end

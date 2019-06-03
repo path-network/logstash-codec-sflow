@@ -25,6 +25,8 @@ class CounterSampleRecordData < BinData::Choice
   hundred_base_vg '0-4'
   vlan '0-5'
   processor_information '0-1001'
+  of_port '0-1004'
+  port_name '0-1005'
   http_counters '0-2201'
   skip :default, :length => :record_length
 end
