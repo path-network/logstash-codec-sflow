@@ -262,6 +262,92 @@ class HostNetIo < BinData::Record
 end
 
 # noinspection RubyResolve
+class Mib2IpGroup < BinData::Record
+  endian :big
+  uint32 :ip_forwarding
+  uint32 :ip_default_ttl
+  uint32 :ip_in_receives
+  uint32 :ip_in_hdr_errors
+  uint32 :ip_in_addr_errors
+  uint32 :ip_forw_datagrams
+  uint32 :ip_in_unknown_protos
+  uint32 :ip_in_discards
+  uint32 :ip_in_delivers
+  uint32 :ip_out_requests
+  uint32 :ip_out_discards
+  uint32 :ip_out_no_routes
+  uint32 :ip_reasm_timeout
+  uint32 :ip_reasm_reqds
+  uint32 :ip_reasm_oks
+  uint32 :ip_reasm_fails
+  uint32 :ip_frag_oks
+  uint32 :ip_frag_fails
+  uint32 :ip_frag_creates
+end
+
+# noinspection RubyResolve
+class Mib2IcmpGroup < BinData::Record
+  endian :big
+  uint32 :icmp_in_msgs
+  uint32 :icmp_in_errors
+  uint32 :icmp_in_dest_unreachs
+  uint32 :icmp_in_time_excds
+  uint32 :icmp_in_param_probs
+  uint32 :icmp_in_src_quenchs
+  uint32 :icmp_in_redirects
+  uint32 :icmp_in_echos
+  uint32 :icmp_in_echo_reps
+  uint32 :icmp_in_timestamps
+  uint32 :icmp_in_addr_masks
+  uint32 :icmp_in_addr_mask_reps
+  uint32 :icmp_out_msgs
+  uint32 :icmp_out_errors
+  uint32 :icmp_out_dest_unreachs
+  uint32 :icmp_out_time_excds
+  uint32 :icmp_out_param_probs
+  uint32 :icmp_out_src_quenchs
+  uint32 :icmp_out_redirects
+  uint32 :icmp_out_echos
+  uint32 :icmp_out_echo_reps
+  uint32 :icmp_out_timestamps
+  uint32 :icmp_out_timestamp_reps
+  uint32 :icmp_out_addr_masks
+  uint32 :icmp_out_addr_mask_reps
+end
+
+# noinspection RubyResolve
+class Mib2TcpGroup < BinData::Record
+  endian :big
+  uint32 :tcp_rto_algorithm
+  uint32 :tcp_rto_min
+  uint32 :tcp_rto_max
+  uint32 :tcp_max_conn
+  uint32 :tcp_active_opens
+  uint32 :tcp_passive_opens
+  uint32 :tcp_attempt_fails
+  uint32 :tcp_estab_resets
+  uint32 :tcp_curr_estab
+  uint32 :tcp_in_segs
+  uint32 :tcp_out_segs
+  uint32 :tcp_retrans_segs
+  uint32 :tcp_in_errs
+  uint32 :tcp_out_rsts
+  uint32 :tcp_in_csum_errs
+end
+
+# noinspection RubyResolve
+class Mib2UdpGroup < BinData::Record
+  endian :big
+  uint32 :udp_in_datagrams
+  uint32 :udp_no_ports
+  uint32 :udp_in_errors
+  uint32 :udp_out_datagrams
+  uint32 :udp_rcvbuf_errors
+  uint32 :udp_sndbuf_errors
+  uint32 :udp_in_csum_errors
+end
+
+# noinspection RubyResolve
 class VirtNode < BinData::Record
   endian :big
   uint32 :mhz
