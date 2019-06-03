@@ -4,6 +4,31 @@ require 'bindata'
 require 'logstash/codecs/sflow/flow_record'
 require 'logstash/codecs/sflow/counter_record'
 
+class FlowSampleRecordData < BinData::Choice
+  mandatory_parameter :record_length
+
+  raw_packet_header '0-1', :record_length => :record_length
+  ethernet_frame_data '0-2'
+  ip4_data '0-3'
+  ip6_data '0-4'
+  extended_switch_data '0-1001'
+  extended_router_data '0-1002'
+  skip :default, :length => :record_length
+end
+
+class CounterSampleRecordData < BinData::Choice
+  mandatory_parameter :record_length
+
+  generic_interface '0-1'
+  ethernet_interfaces '0-2'
+  token_ring '0-3'
+  hundred_base_vg '0-4'
+  vlan '0-5'
+  processor_information '0-1001'
+  http_counters '0-2201'
+  skip :default, :length => :record_length
+end
+
 # noinspection RubyResolve
 class FlowSample < BinData::Record
   endian :big
@@ -20,15 +45,9 @@ class FlowSample < BinData::Record
     bit20 :record_entreprise
     bit12 :record_format
     uint32 :record_length
-    choice :record_data, :selection => lambda { "#{record_entreprise}-#{record_format}" } do
-      raw_packet_header '0-1', :record_length => :record_length
-      ethernet_frame_data '0-2'
-      ip4_data '0-3'
-      ip6_data '0-4'
-      extended_switch_data '0-1001'
-      extended_router_data '0-1002'
-      skip :default, :length => :record_length
-    end
+    flow_sample_record_data :record_data,
+                            :selection => lambda { "#{record_entreprise}-#{record_format}" },
+                            :record_length => :record_length
   end
 end
 
@@ -43,16 +62,9 @@ class CounterSample < BinData::Record
     bit20 :record_entreprise
     bit12 :record_format
     uint32 :record_length
-    choice :record_data, :selection => lambda { "#{record_entreprise}-#{record_format}" } do
-      generic_interface '0-1'
-      ethernet_interfaces '0-2'
-      token_ring '0-3'
-      hundred_base_vg '0-4'
-      vlan '0-5'
-      processor_information '0-1001'
-      http_counters '0-2201'
-      skip :default, :length => :record_length
-    end
+    counter_sample_record_data :record_data,
+                               :selection => lambda { "#{record_entreprise}-#{record_format}" },
+                               :record_length => :record_length
     #processor_information :record_data
   end
 end
@@ -75,15 +87,9 @@ class ExpandedFlowSample < BinData::Record
     bit20 :record_entreprise
     bit12 :record_format
     uint32 :record_length
-    choice :record_data, :selection => lambda { "#{record_entreprise}-#{record_format}" } do
-      raw_packet_header '0-1', :record_length => :record_length
-          ethernet_frame_data '0-2'
-      ip4_data '0-3'
-      ip6_data '0-4'
-      extended_switch_data '0-1001'
-      extended_router_data '0-1002'
-      skip :default, :length => :record_length
-    end
+    flow_sample_record_data :record_data,
+                            :selection => lambda { "#{record_entreprise}-#{record_format}" },
+                            :record_length => :record_length
   end
 end
 
@@ -98,17 +104,9 @@ class ExpandedCounterSample < BinData::Record
     bit20 :record_entreprise
     bit12 :record_format
     uint32 :record_length
-    choice :record_data, :selection => lambda { "#{record_entreprise}-#{record_format}" } do
-      generic_interface '0-1'
-      ethernet_interfaces '0-2'
-      token_ring '0-3'
-      hundred_base_vg '0-4'
-      vlan '0-5'
-      lag_port_stats '0-7'
-      processor_information '0-1001'
-      http_counters '0-2201'
-      skip :default, :length => :record_length
-    end
+    counter_sample_record_data :record_data,
+                               :selection => lambda { "#{record_entreprise}-#{record_format}" },
+                               :record_length => :record_length
     #processor_information :record_data
   end
 end
