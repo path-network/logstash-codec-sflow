@@ -124,7 +124,7 @@ class LogStash::Codecs::Sflow < LogStash::Codecs::Base
         sample['sample_data']['records'].each do |record|
           # Ensure that some data exist for the record
           if record['record_data'].to_s.eql? ''
-            @logger.warn("Unknown record entreprise #{record['record_entreprise'].to_s}, format #{record['record_format'].to_s}")
+            @logger.warn("Unknown sample_flow record: entreprise #{record['record_entreprise'].to_s}, format #{record['record_format'].to_s}")
             next
           end
 
@@ -152,7 +152,7 @@ class LogStash::Codecs::Sflow < LogStash::Codecs::Base
         sample['sample_data']['records'].each do |record|
           # Ensure that some data exist for the record
           if record['record_data'].to_s.eql? ''
-            @logger.warn("Unknown record entreprise #{record['record_entreprise'].to_s}, format #{record['record_format'].to_s}")
+            @logger.warn("Unknown counter_flow record: entreprise #{record['record_entreprise'].to_s}, format #{record['record_format'].to_s}")
             next
           end
 
