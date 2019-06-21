@@ -15,7 +15,8 @@ class RawPacketHeader < BinData::Record
   uint32 :header_size
   choice :sample_header, :selection => :protocol do
     ethernet_header 1, :size_header => lambda { header_size * 8 }
-    ip_header 11, :size_header => lambda { header_size * 8 }
+    ipv4_header 11, :size_header => lambda { header_size * 8 }
+    ipv6_header 12, :size_header => lambda { header_size * 8 }
     skip :default, :length => :header_size
   end
   bit :padded, :nbits => lambda { (record_length - (header_size + 16)) * 8 } #padded data
