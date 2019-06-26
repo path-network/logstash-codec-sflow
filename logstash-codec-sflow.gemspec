@@ -1,7 +1,7 @@
 Gem::Specification.new do |s|
 
   s.name = 'logstash-codec-sflow'
-  s.version = '2.1.0'
+  s.version = '2.1.1'
   s.licenses = ['Apache-2.0']
   s.summary = 'The sflow codec is for decoding SFlow v5 flows.'
   s.description = 'This gem is a logstash plugin required to be installed on top of the Logstash core pipeline using $LS_HOME/bin/plugin install gemname. This gem is not a stand-alone program'
