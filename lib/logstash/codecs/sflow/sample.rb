@@ -74,12 +74,12 @@ class FlowSample < BinData::Record
   endian :big
   uint32 :flow_sequence_number
   uint8 :source_id_type
-  uint24 :source_id_index
-  uint32 :sampling_rate
-  uint32 :sample_pool
+  uint24 :sourceIdIndex
+  uint32 :samplingRate
+  uint32 :samplePool
   uint32 :drops
-  uint32 :input_interface
-  uint32 :output_interface
+  uint32 :input
+  uint32 :output
   uint32 :record_count
   array :records, :initial_length => :record_count do
     bit20 :record_entreprise
@@ -96,7 +96,7 @@ class CounterSample < BinData::Record
   endian :big
   uint32 :sample_seq_number
   uint8 :source_id_type
-  uint24 :source_id_index
+  uint24 :sourceIdIndex
   uint32 :record_count
   array :records, :initial_length => :record_count do
     bit20 :record_entreprise
@@ -113,15 +113,15 @@ end
 class ExpandedFlowSample < BinData::Record
   endian :big
   uint32 :flow_sequence_number
-  uint32 :source_id_type
-  uint32 :source_id_index
-  uint32 :sampling_rate
-  uint32 :sample_pool
+  uint32 :sourceIdType
+  uint32 :sourceIdIndex
+  uint32 :samplingRate
+  uint32 :samplePool
   uint32 :drops
   uint32 :input_interface_format
-  uint32 :input_interface_value
+  uint32 :input
   uint32 :output_interface_format
-  uint32 :output_interface_value
+  uint32 :output
   uint32 :record_count
   array :records, :initial_length => :record_count do
     bit20 :record_entreprise
@@ -137,8 +137,8 @@ end
 class ExpandedCounterSample < BinData::Record
   endian :big
   uint32 :sample_seq_number
-  uint32 :source_id_type
-  uint32 :source_id_index
+  uint32 :sourceIdType
+  uint32 :sourceIdIndex
   uint32 :record_count
   array :records, :initial_length => :record_count do
     bit20 :record_entreprise

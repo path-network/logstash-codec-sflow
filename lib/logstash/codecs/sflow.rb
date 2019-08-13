@@ -54,25 +54,25 @@ class LogStash::Codecs::Sflow < LogStash::Codecs::Base
   # @param [Object] sample
   # @param [Object] record
   def common_sflow(event, decoded, sample)
-    event.set('agent_ip', decoded['agent_ip'].to_s)
+    event.set('deviceIp', decoded['deviceIp'].to_s)
     assign_key_value(event, decoded)
     assign_key_value(event, sample)
   end
 
   def snmp_call(event)
     if @snmp_interface
-      if event.include?('source_id_type') and event.get('source_id_type').to_s == '0'
-        if event.include?('source_id_index')
-          event.set('source_id_index_descr', @snmp.get_interface(event.get('agent_ip'), event.get('source_id_index')))
+      if event.include?('sourceIdType') and event.get('sourceIdType').to_s == '0'
+        if event.include?('sourceIdIndex')
+          event.set('source_id_index_descr', @snmp.get_interface(event.get('deviceIp'), event.get('sourceIdIndex')))
         end
-        if event.include?('input_interface')
-          event.set('input_interface_descr', @snmp.get_interface(event.get('agent_ip'), event.get('input_interface')))
+        if event.include?('input')
+          event.set('input_interface_descr', @snmp.get_interface(event.get('deviceIp'), event.get('input')))
         end
-        if event.include?('output_interface')
-          event.set('output_interface_descr', @snmp.get_interface(event.get('agent_ip'), event.get('output_interface')))
+        if event.include?('output')
+          event.set('output_interface_descr', @snmp.get_interface(event.get('deviceIp'), event.get('output')))
         end
         if event.include?('interface_index')
-          event.set('interface_index_descr', @snmp.get_interface(event.get('agent_ip'), event.get('interface_index')))
+          event.set('interface_index_descr', @snmp.get_interface(event.get('deviceIp'), event.get('interface_index')))
         end
       end
     end
@@ -131,15 +131,20 @@ class LogStash::Codecs::Sflow < LogStash::Codecs::Base
           assign_key_value(event, record)
 
         end
-        #compute frame_length_times_sampling_rate
+        #compute octets
         if event.include?('frame_length') and event.include?('sampling_rate')
-          event.set('frame_length_times_sampling_rate', event.get('frame_length').to_i * event.get('sampling_rate').to_i)
+          event.set('octets', event.get('frame_length').to_i * event.get('sampling_rate').to_i)
+        end
+
+        #compute packets
+        if event.include?('packets') and event.include?('samplingRate')
+          event.set('packets', event.get('packets').to_i * event.get('samplingRate').to_i)
         end
 
         if sample['sample_format'] == 1
-          event.set('sflow_type', 'flow_sample')
+          event.set('sflowType', 'flow_sample')
         else
-          event.set('sflow_type', 'expanded_flow_sample')
+          event.set('sflowType', 'expanded_flow_sample')
         end
 
         #Get interface dfescr if snmp_interface true
@@ -163,9 +168,9 @@ class LogStash::Codecs::Sflow < LogStash::Codecs::Base
           assign_key_value(event, record)
 
           if sample['sample_format'] == 2
-            event.set('sflow_type', 'counter_sample')
+            event.set('sflowType', 'counter_sample')
           else
-            event.set('sflow_type', 'expanded_counter_sample')
+            event.set('sflowType', 'expanded_counter_sample')
           end
 
 
