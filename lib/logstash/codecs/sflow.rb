@@ -131,14 +131,14 @@ class LogStash::Codecs::Sflow < LogStash::Codecs::Base
           assign_key_value(event, record)
 
         end
-        #compute octets
-        if event.include?('frame_length') and event.include?('sampling_rate')
-          event.set('octets', event.get('frame_length').to_i * event.get('sampling_rate').to_i)
-        end
-
+		#@author jeonhn
+        #@change-date : 2019. 8. 13.
         #compute packets
-        if event.include?('packets') and event.include?('samplingRate')
-          event.set('packets', event.get('packets').to_i * event.get('samplingRate').to_i)
+        if event.include?('samplingRate')
+			event.set('packets', decoded['samples'].length * event.get('samplingRate').to_i)
+			if event.include?('frame_length')
+				event.set('octets', event.get('frame_length').to_i * event.get('samplingRate').to_i)
+			end
         end
 
         if sample['sample_format'] == 1
