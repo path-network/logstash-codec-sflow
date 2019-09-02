@@ -36,14 +36,19 @@ class LogStash::Codecs::Sflow < LogStash::Codecs::Base
   # def initialize
 
   def assign_key_value(event, bindata_kv)
-    unless bindata_kv.nil? or bindata_kv.to_s.eql? ''
-      bindata_kv.each_pair do |k, v|
+    inspection_queue = [bindata_kv]
+
+    while !inspection_queue.empty?
+      kv = inspection_queue.shift()
+      if kv.nil? || kv.to_s.eql?('')
+        next
+      end
+
+      kv.each_pair do |k, v|
         if v.is_a?(BinData::Choice)
-          assign_key_value(event, bindata_kv[k])
-        else
-          unless @removed_field.include? k.to_s or v.is_a?(BinData::Array)
-            event.set("#{k.to_s}", v.to_s)
-          end
+          inspection_queue.push(v)
+        elsif !@removed_field.include?(k.to_s) && !v.is_a?(BinData::Array)
+          event.set("#{k.to_s}", v.to_s)
         end
       end
     end
