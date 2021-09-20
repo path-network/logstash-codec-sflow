@@ -21,7 +21,7 @@ Gem::Specification.new do |s|
 
   # Gem dependencies
   s.add_runtime_dependency 'logstash-core-plugin-api', '>= 1.60', '<= 2.99'
-  s.add_runtime_dependency 'logstash-core', '>= 5.4.0', '<= 7.9.9'
+  s.add_runtime_dependency 'logstash-core', '>= 5.4.0', '<= 7.19.9'
   s.add_runtime_dependency 'bindata', ['~> 2.4']
   s.add_runtime_dependency 'lru_redux', ['~> 1.1']
   s.add_runtime_dependency 'snmp', ['~> 1.2']
