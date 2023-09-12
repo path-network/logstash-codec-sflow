@@ -89,7 +89,7 @@ end
 # noinspection RubyResolve
 class Vlan < BinData::Record
   endian :big
-  uint32 :vlan_id
+  uint32 :vlanId
   uint64 :octets
   uint32 :ucastPkts
   uint32 :multicastPkts

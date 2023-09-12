@@ -10,11 +10,14 @@ class RawPacketHeader < BinData::Buffer
   default_parameters :length => :record_length
 
   endian :big
-  uint32 :protocol
-  uint32 :frame_length
+  uint32 :headerProtocol
+  #@author jeonhn
+  #@change-date : 2018. 7. 13.
+  #@fix : packets to frame_length
+  uint32 :packets
   uint32 :stripped
   uint32 :header_size
-  choice :sample_header, :selection => :protocol do
+  choice :sample_header, :selection => :headerProtocol do
     ethernet_header 1, :size_header => lambda { header_size * 8 }
     ipv4_header 11, :size_header => lambda { header_size * 8 }
     ipv6_header 12, :size_header => lambda { header_size * 8 }
@@ -26,9 +29,9 @@ end
 class EthernetFrameData < BinData::Record
   endian :big
   uint32 :packet_length
-  sflow_mac_address :src_mac
+  sflow_mac_address :srcMac
   skip :length => 2
-  sflow_mac_address :dst_mac
+  sflow_mac_address :dstMac
   skip :length => 2
   uint32 :eth_type
 end
@@ -37,12 +40,12 @@ end
 class IP4Data < BinData::Record
   endian :big
   uint32 :ip_packet_length
-  uint32 :ip_protocol
-  sflow_ip4_addr :src_ip
-  sflow_ip4_addr :dst_ip
-  uint32 :src_port
-  uint32 :dst_port
-  uint32 :tcp_flags
+  uint32 :protocol
+  sflow_ip4_addr :srcIpv4
+  sflow_ip4_addr :dstIpv4
+  uint32 :srcPort
+  uint32 :dstPort
+  uint32 :tcpFlags
   uint32 :ip_type
 end
 
@@ -51,40 +54,40 @@ class IP6Data < BinData::Record
   endian :big
   uint32 :ip_packet_length
   uint32 :ip_next_header
-  sflow_ip6_addr :src_ip
-  sflow_ip6_addr :dst_ip
-  uint32 :src_port
-  uint32 :dst_port
-  uint32 :tcp_flags
+  sflow_ip6_addr :srcIpv6
+  sflow_ip6_addr :dstIpv6
+  uint32 :srcPort
+  uint32 :dstPort
+  uint32 :tcpFlags
   uint32 :ip_priority
 end
 
 # noinspection RubyResolve
 class ExtendedSwitchData < BinData::Record
   endian :big
-  uint32 :src_vlan
-  uint32 :src_priority
-  uint32 :dst_vlan
-  uint32 :dst_priority
+  uint32 :srcVlan
+  uint32 :srcPriority
+  uint32 :dstVlan
+  uint32 :dstPriority
 end
 
 # noinspection RubyResolve
 class ExtendedRouterData < BinData::Record
   endian :big
-  uint32 :ip_version
-  choice :ip_address_next_hop_router, :selection => :ip_version do
+  uint32 :ipVersion
+  choice :ip_address_next_hop_router, :selection => :ipVersion do
     sflow_ip4_addr 1
     sflow_ip6_addr 2
   end
-  uint32 :src_mask_len
-  uint32 :dst_mask_len
+  uint32 :srcMask
+  uint32 :dstMask
 end
 
 # noinspection RubyResolve
 class ExtendedGatewayData < BinData::Record
   endian :big
-  uint32 :ip_version
-  choice :ip_address_next_hop_router, :selection => :ip_version do
+  uint32 :ipVersion
+  choice :ip_address_next_hop_router, :selection => :ipVersion do
     sflow_ip4_addr 1
     sflow_ip6_addr 2
   end
@@ -122,8 +125,8 @@ end
 # noinspection RubyResolve
 class ExtendedMplsData < BinData::Record
   endian :big
-  uint32 :ip_version
-  choice :ip_address_next_hop_router, :selection => :ip_version do
+  uint32 :ipVersion
+  choice :ip_address_next_hop_router, :selection => :ipVersion do
     sflow_ip4_addr 1
     sflow_ip6_addr 2
   end
@@ -136,13 +139,13 @@ end
 # noinspection RubyResolve
 class ExtendedNatData < BinData::Record
   endian :big
-  uint32 :src_ip_version
-  choice :src_ip_address, :selection => :src_ip_version do
+  uint32 :srcIpVersion
+  choice :srcIpAddress, :selection => :srcIpVersion do
     sflow_ip4_addr 1
     sflow_ip6_addr 2
   end
-  uint32 :dst_ip_version
-  choice :dst_ip_address, :selection => :dst_ip_version do
+  uint32 :dstIpVersion
+  choice :dstIpAddress, :selection => :dstIpVersion do
     sflow_ip4_addr 1
     sflow_ip6_addr 2
   end

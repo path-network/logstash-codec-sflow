@@ -14,14 +14,14 @@ end
 class SFlow < BinData::Record
   endian :big
   uint32 :sflow_version
-  uint32 :ip_version
-  choice :agent_ip, :selection => :ip_version do
+  uint32 :ipVersion
+  choice :deviceIp, :selection => :ipVersion do
     sflow_ip4_addr 1
     sflow_ip6_addr 2
   end
-  uint32 :sub_agent_id
+  uint32 :subAgentId
   uint32 :sequence_number
-  uint32 :uptime_in_ms
+  uint32 :uptimeInMs
   uint32 :sample_count
   array :samples, :initial_length => :sample_count do
     bit20 :sample_entreprise

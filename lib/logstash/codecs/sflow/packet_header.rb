@@ -18,8 +18,8 @@ class TcpHeader < BinData::Record
   mandatory_parameter :size_header
 
   endian :big
-  uint16 :src_port
-  uint16 :dst_port
+  uint16 :srcPort
+  uint16 :dstPort
   uint32 :tcp_seq_number
   uint32 :tcp_ack_number
   bit4 :tcp_header_length # times 4
@@ -51,8 +51,8 @@ class UdpHeader < BinData::Record
   mandatory_parameter :size_header
 
   endian :big
-  uint16 :src_port
-  uint16 :dst_port
+  uint16 :srcPort
+  uint16 :dstPort
   uint16 :udp_length
   uint16 :udp_checksum
   bit :data, :nbits => lambda { size_header - 64 } #skip udp data
@@ -63,7 +63,7 @@ class IPV4Header < BinData::Record
   mandatory_parameter :size_header
 
   endian :big
-  bit4 :ip_version
+  bit4 :ipVersion
   bit4 :ip_header_length # times 4
   bit6 :ip_dscp
   bit2 :ip_ecn
@@ -72,14 +72,14 @@ class IPV4Header < BinData::Record
   bit3 :ip_flags
   bit13 :ip_fragment_offset
   uint8 :ip_ttl
-  uint8 :ip_protocol
+  uint8 :protocol
   uint16 :ip_checksum
-  sflow_ip4_addr :src_ip
-  sflow_ip4_addr :dst_ip
-  array :ip_options, :initial_length => lambda { (((ip_header_length * 4) - 20)/4).ceil }, :onlyif => :is_options? do
+  sflow_ip4_addr :srcIpv4
+  sflow_ip4_addr :dstIpv4
+  array :ip_options, :initial_length => lambda { ip_header_length - 5 }, :onlyif => :is_options? do
     string :ip_option, :length => 4, :pad_byte => "\0"
   end
-  choice :ip_data, :selection => :ip_protocol, :onlyif => lambda { has_data?(size_header) } do
+  choice :ip_data, :selection => :protocol, :onlyif => lambda { has_data?(size_header) } do
     tcp_header 6, :size_header => lambda { size_header - (ip_header_length * 4 * 8) }
     udp_header 17, :size_header => lambda { size_header - (ip_header_length * 4 * 8) }
     unknown_header :default, :size_header => lambda { size_header - (ip_header_length * 4 * 8) }
@@ -87,7 +87,7 @@ class IPV4Header < BinData::Record
 
   def has_data?(size_header)
     bytes_left = size_header / 8 - ip_header_length * 4
-    case ip_protocol
+    case protocol
     when 6
       return bytes_left >= 20
     when 17
@@ -107,16 +107,16 @@ class IPV6Header < BinData::Record
   mandatory_parameter :size_header
 
   endian :big
-  bit4 :ip_version
+  bit4 :ipVersion
   bit6 :ip_dscp
   bit2 :ip_ecn
   bit20 :ipv6_flow_label
   uint16 :ip_payload_length
-  uint8 :ip_protocol
+  uint8 :protocol
   uint8 :ipv6_hop_limit
-  sflow_ip6_addr :src_ip
-  sflow_ip6_addr :dst_ip
-  choice :ip_data, :selection => :ip_protocol do
+  sflow_ip6_addr :srcIp
+  sflow_ip6_addr :dstIp
+  choice :ip_data, :selection => :protocol do
     tcp_header 6, :size_header => lambda { size_header - 320 }
     udp_header 17, :size_header => lambda { size_header - 320 }
     unknown_header :default, :size_header => lambda { size_header - 320 }
@@ -130,7 +130,7 @@ class VLANHeader < BinData::Record
   endian :big
   bit3 :vlan_priority
   bit1 :vlan_cfi
-  bit12 :vlan_id
+  bit12 :vlanId
   uint16 :vlan_type
   choice :vlan_data, :selection => :vlan_type do
     ipv4_header 2048, :size_header => lambda { size_header - (4 * 8) }
@@ -144,8 +144,8 @@ class EthernetHeader < BinData::Record
   mandatory_parameter :size_header
 
   endian :big
-  sflow_mac_address :eth_dst
-  sflow_mac_address :eth_src
+  sflow_mac_address :ethDst
+  sflow_mac_address :ethSrc
   uint16 :eth_type
   choice :eth_data, :selection => :eth_type do
     ipv4_header 2048, :size_header => lambda { size_header - (14 * 8) }
