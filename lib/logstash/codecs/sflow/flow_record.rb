@@ -11,7 +11,10 @@ class RawPacketHeader < BinData::Buffer
 
   endian :big
   uint32 :headerProtocol
-  uint32 :frame_length
+  #@author jeonhn
+  #@change-date : 2018. 7. 13.
+  #@fix : packets to frame_length
+  uint32 :packets
   uint32 :stripped
   uint32 :header_size
   choice :sample_header, :selection => :headerProtocol do

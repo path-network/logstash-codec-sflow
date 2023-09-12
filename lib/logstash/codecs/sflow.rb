@@ -136,14 +136,12 @@ class LogStash::Codecs::Sflow < LogStash::Codecs::Base
           assign_key_value(event, record)
 
         end
-		#@author jeonhn
-        #@change-date : 2019. 8. 13.
-        #compute packets
-        if event.include?('samplingRate')
-			event.set('packets', decoded['samples'].length * event.get('samplingRate').to_i)
-			if event.include?('frame_length')
-				event.set('octets', event.get('frame_length').to_i * event.get('samplingRate').to_i)
-			end
+		    #@author jeonhn
+        #@change-date : 2018. 7. 13.
+        #compute frame_length_times_sampling_rate
+        #packets to frame_length
+        if event.include?('packets') and event.include?('samplingRate')
+				  event.set('octets', event.get('packets').to_i * event.get('samplingRate').to_i)
         end
 
         if sample['sample_format'] == 1
@@ -159,6 +157,11 @@ class LogStash::Codecs::Sflow < LogStash::Codecs::Base
 
       #treat counter flow and expanded counter flow
       elsif sample['sample_entreprise'] == 0 && (sample['sample_format'] == 2 || sample['sample_format'] == 4)
+		    #@author jeonhn
+        #@change-date : 2018. 7. 13.
+        #compute frame_length_times_sampling_rate
+        # continue
+          next
         sample['sample_data']['records'].each do |record|
           # Ensure that some data exist for the record
           if record['record_data'].to_s.eql? ''
