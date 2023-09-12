@@ -46,7 +46,10 @@ class CounterSampleRecordData < BinData::Choice
   token_ring '0-3'
   hundred_base_vg '0-4'
   vlan '0-5'
+  ieee80211_counters '0-6'
+  lag_port_stats '0-7'
   processor_information '0-1001'
+  radio_utilization '0-1002'
   of_port '0-1004'
   port_name '0-1005'
   host_descr '0-2000'
@@ -66,6 +69,7 @@ class CounterSampleRecordData < BinData::Choice
   virt_disk_io '0-2103'
   virt_net_io '0-2104'
   http_counters '0-2201'
+  ovs_dp_stats '0-2207'
   skip :default, :length => :record_length
 end
 

@@ -98,6 +98,31 @@ class Vlan < BinData::Record
 end
 
 # noinspection RubyResolve
+class Ieee80211Counters < BinData::Record
+  endian :big
+  uint32 :dot11_transmitted_fragments
+  uint32 :dot11_multicast_transmitted_frames
+  uint32 :dot11_failures
+  uint32 :dot11_retries
+  uint32 :dot11_multiple_retries
+  uint32 :dot11_duplicate_frames
+  uint32 :dot11_rts_successes
+  uint32 :dot11_rts_failures
+  uint32 :dot11_ack_failures
+  uint32 :dot11_received_fragments
+  uint32 :dot11_multicast_received_frames
+  uint32 :dot11_fcs_errors
+  uint32 :dot11_transmitted_frames
+  uint32 :dot11_wep_undecryptables
+  uint32 :dot11_qos_discarded_fragments
+  uint32 :dot11_associated_stations
+  uint32 :dot11_qos_cf_polls_eceived
+  uint32 :dot11_qos_cf_polls_unused
+  uint32 :dot11_qos_cf_polls_unusable
+  uint32 :dot11_qos_cf_polls_lost
+end
+
+# noinspection RubyResolve
 class ProcessorInformation < BinData::Record
   endian :big
   uint32 :five_sec_cpu_percent
@@ -105,6 +130,14 @@ class ProcessorInformation < BinData::Record
   uint32 :five_min_cpu_percent
   uint64 :total_memory
   uint64 :free_memory
+end
+
+# noinspection RubyResolve
+class RadioUtilization < BinData::Record
+  endian :big
+  uint32 :radio_elapsed_time_ms
+  uint32 :radio_on_channel_time_ms
+  uint32 :radio_on_channel_busy_time_ms
 end
 
 # noinspection RubyResolve
@@ -396,4 +429,15 @@ class VirtNetIo < BinData::Record
   uint32 :tx_packets
   uint32 :tx_errs
   uint32 :tx_drop
+end
+
+# noinspection RubyResolve
+class OvsDpStats < BinData::Record
+  endian :big
+  uint32 :ovs_dp_hits                                                
+  uint32 :ovs_dp_misses
+  uint32 :ovs_dp_lost
+  uint32 :ovs_dp_mask_hits
+  uint32 :ovs_dp_flows
+  uint32 :ovs_dp_masks
 end
